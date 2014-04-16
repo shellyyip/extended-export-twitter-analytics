@@ -1,14 +1,40 @@
-<script src="/app.js"></script>
-<h1>Extended Export for Twitter Analytics</h1>
-<ol>
-	<li>Log into the Twitter account you need data for. (You can do this in a separate tab or window, but not a separate browser.)</li>
-	<li>Go to <a href="https://ads.twitter.com/accounts/xxxxxx/timeline_activity/tweet_data" target="_blank">https://ads.twitter.com/accounts/xxxxxx/timeline_activity/tweet_data</a> (opens in new tab)</li>
-	<li>You should see a page with a lot of text and curly brackets, starting with the word "statuses". Paste that into this box:
-		<textarea rows="8" cols="100" class="json-input"  placeholder='{"statuses":[{...'>
-</textarea>	
-	</li>
-	<li>If the data you pasted is valid, a table should appear below and the Download as CSV link should light up. Yay!</li>
-	<li>Click to download as CSV.</li>
-</ol>
-<a>Download as CSV</a>
-<pre class="csv"></pre>
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Place favicon.ico and apple-touch-icon(s) in the root directory -->
+    <link rel="stylesheet" href="style.css">
+    <script src="/app.js"></script>
+</head>
+<body>
+	<header>
+		<h1>Extended Export</h1>
+		<h2>for Twitter Analytics</h2>
+	</header>
+	<div class="wrapper">
+		<ol class="instructions">
+			<li>Log into the Twitter account you need data for. <span class="helptext">You can do this in a separate tab or window, but not a separate browser.</span></li>
+			<li>Go to <a href="https://ads.twitter.com/accounts/xxxxxx/timeline_activity/tweet_data" target="_blank">https://ads.twitter.com/accounts/xxxxxx/timeline_activity/tweet_data</a> <span class="helptext">opens in new tab</span></li>
+			<li>You should see a page with a lot of text and curly brackets, starting with the word "statuses". Copy & paste all of the text into this box:
+				<textarea rows="8" cols="100" class="json-input"  placeholder='{"statuses":[{...'></textarea>	
+			</li>
+			<li>If the data you pasted is valid, a table should appear below and the Download as CSV link should light up. Yay!</li>
+			<li>Click to download as CSV.</li>
+		</ol>
+		<section class="dev-notes">
+			<ul>
+				<li>As of now, "clicks" only displays the click count for the first link in the tweet (whether it's an uploaded photo or pasted-in link). Still working on getting clicks for each link.</li>
+			</ul>
+		</section>
+		<section class="output-buttons">
+			<a class="download-csv">Download as CSV</a>
+		</section>
+		<pre class="output-display"></pre>
+	</div>
+</body>
+</html>

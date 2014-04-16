@@ -1,0 +1,55 @@
+@import 'reset';
+
+body {
+  font-family: 'Georgia','Times New Roman', serif;
+  background: url('/images/old_mathematics.png');
+}
+header {
+  text-align: center;
+  padding: 2.5rem;
+  background-image: linear-gradient(rgba(85,172,238,1), rgba(85,172,238,0));
+}
+.wrapper {
+  margin: 2rem auto;
+}
+
+// *** Typography
+h1, h2 {
+  font-weight: bold;
+  padding-bottom: .5rem;
+}
+h1 {
+  font-size: 3rem;
+}
+h2 {
+  font-size: 2rem;
+}
+p, li {
+  font-size: 1rem;
+  padding-bottom: .5rem;
+}
+pre {
+  font-family: 'Courier',serif;
+  font-size: .75rem;
+}
+// *** Special Elements
+ol {
+  list-style-type: decimal;
+  padding-left: 2rem;
+  margin: 0 auto;
+  display: inline-block;
+}
+textarea {
+  margin: 1rem;
+}
+
+// *** Specific
+.helptext {
+  font-size: 80%;
+  color: #999;
+}
+.output-buttons {
+  text-align: center;
+  margin: 1rem;
+  a {font-size: 2rem;}
+}

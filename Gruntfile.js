@@ -7,7 +7,7 @@ module.exports = function(grunt) {
 				livereload : true,//needs LiveReload Chrome extension to be turned on
 			},
 			scripts : {
-				files : ['*.html','/scripts/*.js','Gruntfile.js'],
+				files : ['*.html','scripts/*.js','app.js','Gruntfile.js','scss/*.scss'],
 				tasks : ['sass', 'autoprefixer','browserify'],
 				options : {
 					spawn : false,
@@ -32,21 +32,20 @@ module.exports = function(grunt) {
 			}
 		},
 		browserify: {
-		 	main: {
-		    	files: {"app.js": ["scripts/main.js","scripts/getinput.js"]},
-		    	external: ["jquery"]
-		  	},
+			main: {
+				files: { 'app.js' : ['scripts/main.js'] },
+				external: ['jquery']
+			},
 			options: {
-	   			watch: true	  
-	   		}
-	    }
+				watch: true
+			}
+		}
 	});
 
 	// Where we tell Grunt we plan to use this plug-in.
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-contrib-sass');
 	grunt.loadNpmTasks('grunt-autoprefixer');
-	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-browserify');
 	// Where we tell Grunt what to do when we type "grunt" into the terminal.
 	grunt.registerTask('default', ['watch', 'sass', 'autoprefixer','jshint','browserify']);

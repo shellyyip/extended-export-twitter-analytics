@@ -1,0 +1,26 @@
+{
+  "name": "extended-export-twitter-analytics",
+  "version": "0.1.0",
+  "main": "scripts/main.js",
+  "browser": {
+    "jquery": "./scripts/lib/jquery-2.1.0.min.js"
+  },
+  "browserify-shim": {
+    "jquery": "$"
+  },
+  "browserify": {
+    "transform": ["browserify-shim"]
+  },
+  "dependencies": {
+  	"browserify": "",
+    "browserify-shim": ""
+  },
+  "devDependencies": {
+    "grunt": "",
+    "grunt-contrib-sass": "",
+    "grunt-contrib-watch": "",
+    "grunt-autoprefixer": "",
+    "grunt-contrib-jshint": "",
+    "grunt-browserify":""
+  }
+}
