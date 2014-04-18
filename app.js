@@ -61,7 +61,7 @@ var $ = require('jquery');
 var getKeys = require('../scripts/getcheckboxes.js');
 var filter = require('../scripts/filter.js');//function
 //var outputCSV = require('../scripts/output-csv.js');//function
-
+// MAIN.JS
 //https://ads.twitter.com/accounts/xxxxxx/timeline_activity/tweet_data
 $(document).ready(function() {
 	//Get the JSON data
@@ -70,13 +70,17 @@ $(document).ready(function() {
 	var input;
 	var keys;
 	var friendlyNames;
-	console.log(keys);
-	console.log(friendlyNames);
-	$('#tweetkeys').bind('click', function() {
+	$('#tweetkeys').find('input[type=checkbox]').bind('click', function() {
+		if ($(this).attr('checked') == 'checked') {
+			$(this).attr('checked',false);
+		} else {
+			$(this).attr('checked',true);
+		}
 		friendlyNames = getKeys('#tweetkeys','name');
 		keys = getKeys('#tweetkeys','data-prop');
 		console.log(keys);
 	});
+	console.log(keys);
 	elem.bind('propertychange keyup input paste',
 		function(){
 			input = $('.json-input').val();
