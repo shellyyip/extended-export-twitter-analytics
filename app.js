@@ -1,4 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+// ***** FILTER.JS
 //Filters original array of obejcts into a new curated array of JSON.
 //Input & output = array of JSON objs
 module.exports = function(input, properties){
@@ -64,20 +65,7 @@ var filter = require('../scripts/filter.js');//function
 // MAIN.JS
 //https://ads.twitter.com/accounts/xxxxxx/timeline_activity/tweet_data
 $(document).ready(function() {
-	//Get the JSON data
-	function generate(tweets,keys) {	
-		keys = getKeys('#tweetkeys','data-prop');
-		console.log(keys);
-		var jsonOutput = filter(tweets, keys);	
-		console.log(jsonOutput);
-		$('.output-display').text(JSON.stringify(jsonOutput));
-		$('.output-display').append(
-			'<h1>'+friendlyNames+'</h1>'
-		);
-		for (var i=0; i < jsonOutput.length; i++) {
-			$('.output-display').append('<p>'+JSON.stringify(jsonOutput[i], null, 4)+'</p><hr>');
-		}		
-	}	
+
 	//Get keys
 	var keys;
 	var friendlyNames;	
@@ -91,21 +79,33 @@ $(document).ready(function() {
 		keys = getKeys('#tweetkeys','data-prop');
 		console.log(keys);
 	});
-	//Get tweets
-	var input;
-	var tweets;
-	var elem = $('.json-input');
-	elem.data('oldVal', elem.val());
-	elem.bind('propertychange keyup input paste',
-		function(){
-			input = $(this).val();
-			//validate
-			if (input.search('statuses')) {		
-				tweets = $.parseJSON(input).statuses;	
-			}
+	
+	//Get tweets by taking raw copy/pasted obj input and getting the array of objs inside
+	function getTweetsArray(textarea) {
+		var textareaValue = $(textarea).val();
+		if (textareaValue.search('statuses')) {		
+			return $.parseJSON(textareaValue).statuses;	
 		}
-	);
+	}
+	
+	//Get the JSON data
+	function generate(tweets,keys) {	
+		keys = getKeys('#tweetkeys','data-prop');
+		console.log(keys);
+		var jsonOutput = filter(tweets, keys);	
+		console.log(jsonOutput);
+		$('.output-display').text(JSON.stringify(jsonOutput));
+		$('.output-display').append(
+			'<h1>'+friendlyNames+'</h1>'
+		);
+		for (var i=0; i < jsonOutput.length; i++) {
+			$('.output-display').append('<p>'+JSON.stringify(jsonOutput[i], null, 4)+'</p><hr>');
+		}		
+	}		
+	
 	$('.generate').bind('click', function() {
+		// ** Must regenerate tweet array, for case if the user dropped a key and now wants it back
+		var tweets = getTweetsArray('.json-input')
 		generate(tweets,keys);
 	});
 });

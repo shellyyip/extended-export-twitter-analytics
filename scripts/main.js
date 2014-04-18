@@ -5,20 +5,7 @@ var filter = require('../scripts/filter.js');//function
 // MAIN.JS
 //https://ads.twitter.com/accounts/xxxxxx/timeline_activity/tweet_data
 $(document).ready(function() {
-	//Get the JSON data
-	function generate(tweets,keys) {	
-		keys = getKeys('#tweetkeys','data-prop');
-		console.log(keys);
-		var jsonOutput = filter(tweets, keys);	
-		console.log(jsonOutput);
-		$('.output-display').text(JSON.stringify(jsonOutput));
-		$('.output-display').append(
-			'<h1>'+friendlyNames+'</h1>'
-		);
-		for (var i=0; i < jsonOutput.length; i++) {
-			$('.output-display').append('<p>'+JSON.stringify(jsonOutput[i], null, 4)+'</p><hr>');
-		}		
-	}	
+
 	//Get keys
 	var keys;
 	var friendlyNames;	
@@ -32,21 +19,33 @@ $(document).ready(function() {
 		keys = getKeys('#tweetkeys','data-prop');
 		console.log(keys);
 	});
-	//Get tweets
-	var input;
-	var tweets;
-	var elem = $('.json-input');
-	elem.data('oldVal', elem.val());
-	elem.bind('propertychange keyup input paste',
-		function(){
-			input = $(this).val();
-			//validate
-			if (input.search('statuses')) {		
-				tweets = $.parseJSON(input).statuses;	
-			}
+	
+	//Get tweets by taking raw copy/pasted obj input and getting the array of objs inside
+	function getTweetsArray(textarea) {
+		var textareaValue = $(textarea).val();
+		if (textareaValue.search('statuses')) {		
+			return $.parseJSON(textareaValue).statuses;	
 		}
-	);
+	}
+	
+	//Get the JSON data
+	function generate(tweets,keys) {	
+		keys = getKeys('#tweetkeys','data-prop');
+		console.log(keys);
+		var jsonOutput = filter(tweets, keys);	
+		console.log(jsonOutput);
+		$('.output-display').text(JSON.stringify(jsonOutput));
+		$('.output-display').append(
+			'<h1>'+friendlyNames+'</h1>'
+		);
+		for (var i=0; i < jsonOutput.length; i++) {
+			$('.output-display').append('<p>'+JSON.stringify(jsonOutput[i], null, 4)+'</p><hr>');
+		}		
+	}		
+	
 	$('.generate').bind('click', function() {
+		// ** Must regenerate tweet array, for case if the user dropped a key and now wants it back
+		var tweets = getTweetsArray('.json-input')
 		generate(tweets,keys);
 	});
 });

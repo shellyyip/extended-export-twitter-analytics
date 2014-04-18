@@ -1,3 +1,4 @@
+// ***** FILTER.JS
 //Filters original array of obejcts into a new curated array of JSON.
 //Input & output = array of JSON objs
 module.exports = function(input, properties){
