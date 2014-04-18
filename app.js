@@ -60,12 +60,11 @@ return d||(f=$b[b],$b[b]=e,e=null!=c(a,b,d)?b.toLowerCase():null,$b[b]=f),e}});v
 },{}],4:[function(require,module,exports){
 var $ = require('jquery');
 var getKeys = require('../scripts/getcheckboxes.js');
-var filter = require('../scripts/filter.js');//function
+var simplifyTweets = require('../scripts/simplify-tweets.js');
 //var outputCSV = require('../scripts/output-csv.js');//function
 // MAIN.JS
 //https://ads.twitter.com/accounts/xxxxxx/timeline_activity/tweet_data
 $(document).ready(function() {
-
 	//Get keys
 	var keys;
 	var friendlyNames;	
@@ -77,23 +76,19 @@ $(document).ready(function() {
 		}
 		friendlyNames = getKeys('#tweetkeys','name');
 		keys = getKeys('#tweetkeys','data-prop');
-		console.log(keys);
-	});
-	
+	});	
 	//Get tweets by taking raw copy/pasted obj input and getting the array of objs inside
 	function getTweetsArray(textarea) {
 		var textareaValue = $(textarea).val();
 		if (textareaValue.search('statuses')) {		
 			return $.parseJSON(textareaValue).statuses;	
 		}
-	}
-	
-	//Get the JSON data
+	}	
+	//Generate new filtered array of objs and print them out on screen
 	function generate(tweets,keys) {	
 		keys = getKeys('#tweetkeys','data-prop');
-		console.log(keys);
-		var jsonOutput = filter(tweets, keys);	
-		console.log(jsonOutput);
+		var jsonOutput = simplifyTweets(tweets, keys);
+console.log(jsonOutput);
 		$('.output-display').text(JSON.stringify(jsonOutput));
 		$('.output-display').append(
 			'<h1>'+friendlyNames+'</h1>'
@@ -101,12 +96,35 @@ $(document).ready(function() {
 		for (var i=0; i < jsonOutput.length; i++) {
 			$('.output-display').append('<p>'+JSON.stringify(jsonOutput[i], null, 4)+'</p><hr>');
 		}		
-	}		
+	}	
+	
 	
 	$('.generate').bind('click', function() {
 		// ** Must regenerate tweet array, for case if the user dropped a key and now wants it back
-		var tweets = getTweetsArray('.json-input')
-		generate(tweets,keys);
+		var tweets = getTweetsArray('.json-input');
+		generate(tweets,keys);		
 	});
 });
-},{"../scripts/filter.js":1,"../scripts/getcheckboxes.js":2,"jquery":3}]},{},[4]);
+},{"../scripts/getcheckboxes.js":2,"../scripts/simplify-tweets.js":5,"jquery":3}],5:[function(require,module,exports){
+var getArray = require('../scripts/filter.js');
+// **** SIMPLIFY-TWEETS.JS
+// INPUT: array of standard tweet objects (formatted like their API), array of obj of desired properties, optimally mapped as prop:friendlyName
+// OUTPUT: totally simplified tweet objects in array, formatted as friendlyName: propValue
+module.exports = function(rawArray, keysArray){
+	var rawArray = getArray(rawArray, keysArray);
+	return rawArray;
+	var output = [];
+	//loop through tweets
+	for (var i = 0; i < tweets.length; i++) {
+		switch(n)
+			{
+			case 1:
+			  break;
+			case 2:
+			  break;
+			default:
+				return;
+			}
+	}
+};
+},{"../scripts/filter.js":1}]},{},[4]);
