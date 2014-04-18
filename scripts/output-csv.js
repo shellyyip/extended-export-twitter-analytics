@@ -1,4 +1,4 @@
-//Take the array of headers the user wants, and the curated JSON object,and orrange into CSV.
+//Take the array of headers the user wants, and the curated array of objects,and orrange into CSV.
 var tweets = require('../scripts/filter.js');//function
 module.exports = function(tweets){
 	var output = [];

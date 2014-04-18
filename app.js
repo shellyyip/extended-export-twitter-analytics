@@ -1,33 +1,50 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 //Filters original array of obejcts into a new curated array of JSON.
-module.exports = function(jsonRaw, properties){
-	var jsonOutput = [];//array of objects	
-	
+//Input & output = array of JSON objs
+module.exports = function(input, properties){
+	var output = [];//array of objects	
 	//check properties (array of keys user wants to filter to)
 		//does it just say "all?"
-		//skip all this jank and return the original JSON raw
-	
-	function filterKeys(obj,keysArray) {
-		for (var key in obj) {
-			//if key not in keysArray
-			if ($.inArray(key, keysArray) != -1) {
-				//drop that sucka
-				delete obj[key];
-				//return obj
-			};
-			return obj;
+		//skip all this jank and return the original JSON raw	
+	function filterKeys(obj,keysArray) { 
+	  	for (var key in obj) {
+	    	if (typeof obj[key] == "object" && $.inArray(key, keysArray) != -1) {
+	    		//if this is a nesting key but we want to keep everything inside
+	    		continue;
+	    	} else if (typeof obj[key] == "object") {
+			    //search the keys of this key's object
+			    filterKeys(obj[key],keysArray);     
+		    } else {
+		      if ($.inArray(key, keysArray) == -1) {
+		        //drop that sucka
+		        delete obj[key];
+		      }
+		    }
 		}
-	}
-	
-	//Loop through & filterKeys each member of raw array
-	for (var i = 0; i < jsonRaw.length; i++) {
-		var obj = jsonRaw[i];
-		filterKeys(obj,properties);
-		
+		return obj;
 	}	
-	return jsonOutput;
+	//Loop through & filterKeys each member of raw array
+	for (var i = 0; i < input.length; i++) {
+		var obj = input[i];
+		filterKeys(obj,properties);	
+		output.push(obj);	
+	}	
+	return output;
 };
 },{}],2:[function(require,module,exports){
+// elem = HTML container of checkboxes
+// attr = desired checkbox attribute to collect
+// Returns an array of the attributes of the checked checkboxes.
+module.exports = function(elem,attr){
+	var output = [];
+	var checkboxes = $(elem).find('input[type=checkbox][checked]');	
+	$('input[type=checkbox][checked]').each(function() {
+		var item = $(this).attr(attr);
+		output.push(item);
+	});
+	return output;
+};
+},{}],3:[function(require,module,exports){
 (function (global){
 (function browserifyShim(module, exports, define, browserify_shim__define__module__export__) {
 /*! jQuery v2.1.0 | (c) 2005, 2014 jQuery Foundation, Inc. | jquery.org/license */
@@ -39,10 +56,11 @@ return d||(f=$b[b],$b[b]=e,e=null!=c(a,b,d)?b.toLowerCase():null,$b[b]=f),e}});v
 }).call(global, undefined, undefined, undefined, function defineExport(ex) { module.exports = ex; });
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 var $ = require('jquery');
+var getKeys = require('../scripts/getcheckboxes.js');
 var filter = require('../scripts/filter.js');//function
-var outputCSV = require('../scripts/output-csv.js');//function
+//var outputCSV = require('../scripts/output-csv.js');//function
 
 //https://ads.twitter.com/accounts/xxxxxx/timeline_activity/tweet_data
 $(document).ready(function() {
@@ -50,102 +68,32 @@ $(document).ready(function() {
 	var elem = $('.json-input');
 	elem.data('oldVal', elem.val());
 	var input;
-	var properties = ["status_id","time","tweet_text","faves","retweets","replies","link","picture","clicks","reach"];
+	var keys;
+	var friendlyNames;
+	console.log(keys);
+	console.log(friendlyNames);
+	$('#tweetkeys').bind('click', function() {
+		friendlyNames = getKeys('#tweetkeys','name');
+		keys = getKeys('#tweetkeys','data-prop');
+		console.log(keys);
+	});
 	elem.bind('propertychange keyup input paste',
 		function(){
 			input = $('.json-input').val();
 			//validate
 			if (input.search('statuses')) {		
 				var tweets = $.parseJSON(input).statuses;	
-				var jsonOutput = filter(tweets, properties);	
-				outputCSV(tweets);		
-				$('.output-display').text(jsonOutput);
+				var jsonOutput = filter(tweets, keys);	
+				console.log(jsonOutput);
+				$('.output-display').text(JSON.stringify(jsonOutput));
+				$('.output-display').append(
+					'<h1>'+friendlyNames+'</h1>'
+				);
+				for (var i=0; i < jsonOutput.length; i++) {
+					$('.output-display').append('<p>'+JSON.stringify(jsonOutput[i], null, 4)+'</p><hr>');
+				}
 			}		
 		}
 	);
 });
-},{"../scripts/filter.js":1,"../scripts/output-csv.js":4,"jquery":2}],4:[function(require,module,exports){
-//Take the array of headers the user wants, and the curated JSON object,and orrange into CSV.
-var tweets = require('../scripts/filter.js');//function
-module.exports = function(tweets){
-	var output = [];
-	//What keys do we want?
-	var properties = ["status_id","time","tweet_text","faves","retweets","replies","link","picture","clicks","reach"];
-//Loop through each member of tweets array
-for (var i = 0; i < tweets.length; i++) {
-	
-	var link = tweets[i].links;
-	var linkclicks = '';
-	for (var key in link) {
-	  linkclicks = link[key];
-	}
-	// Find an external link URL
-	try {
-		var linkurl = tweets[i].entities.urls[0].expanded;
-	} catch(error) {
-		var linkurl = '';
-	}
-	// Find an embedded photo
-	try {
-		var photourl = tweets[i].entities.media[0].display_url;
-	} catch(error) {
-		var photourl = '';
-	}
-	
-	var badges = tweets[i].badges;
-	var reach = '';
-	for (var key in badges) {
-	  reach = badges[key];
-	}
-	//process text for CSV output
-	var text = tweets[i].text;
-	 text = text.replace(/"/g,'""');
-	//convert time
-	var time = new Date(tweets[i].timestamp);
-	// text = text.replace(/,/g,'","');
-	var newRow = 
-		output.push ({
-		  "status_id": tweets[i].id,
-		  "time": time,
-		  "tweet_text": '"'+text+'"',
-		  "faves": tweets[i].stats.faves,
-		  "retweets": tweets[i].stats.retweets,
-		  "replies": tweets[i].stats.replies,
-		  "link": linkurl,
-		  "photo": photourl,
-		  "clicks": linkclicks,
-		  "reach": reach
-		});
-};
-//Prep content for CSV export. *** FOR TEXT, must put quotes around to prevent CSV from delimiting at "real" commas!
-var headers = '';
-for (var i=0; i < properties.length; i++){
-  headers = headers+properties[i]+',';
-}
-var rows = '';
-for (var i=0; i < output.length; i++) {
-	var newRow = '';
-	for (var key in output[i]) {
-		newRow = newRow+output[i][key]+',';
-	}
-	//Lop off last comma & replace with newline
-	newRow = newRow.substring(0, newRow.length - 1);
-	newRow = newRow+'\r\n';
-	//Add the row to rows
-	rows = rows+newRow;
-}
-
-//Lop off last comma
-headers = headers.substring(0, headers.length - 1);
-
-var csv = headers+'\r\n'+rows;
-
-//$('.output-display').text(csv);
-
-$('.download-csv').attr({
-		href: 'data:application/csv,' + encodeURI(csv),	
-		target: '_blank',
-		download: 'twitter-export.csv'	
-	});
-};
-},{"../scripts/filter.js":1}]},{},[3]);
+},{"../scripts/filter.js":1,"../scripts/getcheckboxes.js":2,"jquery":3}]},{},[4]);
