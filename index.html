@@ -24,17 +24,78 @@
 				<textarea rows="8" cols="100" class="json-input"  placeholder='{"statuses":[{...'></textarea>	
 			</li>
 			<li>
-				<ul id="tweetkeys">
-					<li>
-						<input type="checkbox" name="Tweet Text" data-prop="text">Tweet Text
-					</li>
-					<li>
-						<input type="checkbox" name="Tweet ID" data-prop="id">Tweet ID
-					</li>
-					<li>
-						<input type="checkbox" name="Links with Click Counts" data-prop="links">Links with Click Counts
-					</li>
-				</ul>
+				<p>Select the properties you want:</p>
+				<div id="tweetkeys">
+					<h3>Basic Info</h3>
+					<ul>
+						<li>
+							<input type="checkbox" name="Date & Time" data-prop="timestamp" checked disabled>Date & Time <span class="helptext">Required</span>
+						</li>
+						<li>
+							<input type="checkbox" name="Tweet Text" data-prop="text">Tweet Text
+						</li>
+						<li>
+							<input type="checkbox" name="Permalink" data-prop="permalink">Permalink
+						</li>
+						<li>
+							<input type="checkbox" name="Tweet ID" data-prop="id">Tweet ID
+						</li>
+					</ul>
+					
+					<h3>Stats</h3>
+					<ul>
+						<li>
+							<input type="checkbox" name="Retweets" data-prop="retweets">Retweets
+						</li>
+						<li>
+							<input type="checkbox" name="Faves" data-prop="faves">Faves
+						</li>
+						<li>
+							<input type="checkbox" name="Replies" data-prop="replies">Replies
+						</li>
+					</ul>
+					
+					<h3>Sponsored Info  <span class="helptext">Each returns "true" or "false" and also returns sponsored start & end dates, campaign names, and campaign start & end dates</span></h3>
+					<ul>
+						<li>
+							<input type="checkbox" name="Is Sponsored?" data-prop="is_sponsored">Is Sponsored?
+						</li>
+						<li>
+							<input type="checkbox" name="Is Nullcasted?" data-prop="is_nullcasted">Is Nullcasted?
+						</li>
+						<li>
+							<input type="checkbox" name="Is Narrowcasted?" data-prop="is_narrowcasted">Is Narrowcasted?
+						</li>
+					</ul>
+					
+					<h3>Links</h3>
+					<ul>
+						<li>
+							<input type="checkbox" name="Mentions" data-prop="mentions">Mentions
+						</li>
+						<li>
+							<input type="checkbox" name="Links with Click Counts" data-prop="links">Links with Click Counts <span class="helptext">Includes embedded photo links</span>
+						</li>
+						<li>
+							<input type="checkbox" name="Hashtags" data-prop="hashtags">Hashtags
+						</li>
+					</ul>
+					
+					<h3>Huh?</h3>
+					<ul>
+						<li>
+							<input type="checkbox" name="Index" data-prop="index">Tweet Index
+						</li>
+						<li>
+							<input type="checkbox" name="Badges" data-prop="badges" disabled>Badges  <span class="helptext">Currently does not work until I figure out what this is</span>
+						</li>
+					</ul>
+					
+					
+					
+					
+					
+				</div>
 			</li>
 			<li>
 				<button class="generate">GENERATE!</button>

@@ -29,7 +29,7 @@ $(document).ready(function() {
 		keys = getKeys('#tweetkeys','data-prop');
 		var jsonOutput = simplifyTweets(tweets, keys);
 console.log(jsonOutput);
-		//$('.output-display').text(JSON.stringify(jsonOutput));
+		$('.output-display').html('');//clear previous content
 		$('.output-display').append(
 			'<h1>'+friendlyNames+'</h1>'
 		);
