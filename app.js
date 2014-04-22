@@ -88,7 +88,6 @@ $(document).ready(function() {
 	var generate = function (tweets,keys) {	
 		keys = getKeys('#tweetkeys','data-prop');
 		var jsonOutput = simplifyTweets(tweets, keys);
-console.log(jsonOutput);
 		$('.output-display').html('');//clear previous content
 		$('.output-display').append(
 			'<h1>'+friendlyNames+'</h1>'
