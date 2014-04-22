@@ -89,28 +89,28 @@ $(document).ready(function() {
 	var generate = function (tweets,keys) {	
 		keys = getKeys('#tweetkeys','data-prop');
 		var simpTweets = simplifyTweets(tweets, keys);
+		var csv = outputCSV(simpTweets);
+		//Output data onto screen
 		$('.output-display, .csv-display').html('');//clear previous content
-		$('.csv-display').text(outputCSV(simpTweets));
+		$('.csv-display').text(csv);
 		$('.output-display').append(
 			'<h1>'+friendlyNames+'</h1>'
 		);
 		for (var i=0; i < simpTweets.length; i++) {
 			$('.output-display').append('<p>'+JSON.stringify(simpTweets[i], null, 4)+'</p><hr>');
-		}		
+		}
+		//Activate CSV download
+		$('.download-csv').attr({
+			href: 'data:application/csv,' + encodeURI(csv),	
+			target: '_blank',
+			download: 'twitter-export.csv'	
+		});				
 	};	
 		
 	$('.generate-button').bind('click', function() {
 		// ** Must regenerate tweet array, for case if the user dropped a key and now wants it back
 		var tweets = getTweetsArray('.json-input');
 		generate(tweets,keys);	
-		var csv = outputCSV(tweets);
-		console.log('tweets: '+tweets);
-		//Activate Download CSV button	
-		$('.download-csv').attr({
-			href: 'data:application/csv,' + encodeURI(csv),	
-			target: '_blank',
-			download: 'twitter-export.csv'	
-		});	
 	});
 	$('.download-csv').bind('click', function() {
 		// ** Must regenerate tweet array, for case if the user dropped a key and now wants it back
@@ -118,12 +118,7 @@ $(document).ready(function() {
 		var csv = outputCSV(tweets);
 		$('.csv-display').html('');//clear previous content
 		
-		//Activate Download CSV button	
-		$('.download-csv').attr({
-			href: 'data:application/csv,' + encodeURI(csv),	
-			target: '_blank',
-			download: 'twitter-export.csv'	
-		});	
+		
 	});
 });
 },{"../scripts/getcheckboxes.js":2,"../scripts/output-csv.js":5,"../scripts/simplify-tweets.js":6,"jquery":3}],5:[function(require,module,exports){
