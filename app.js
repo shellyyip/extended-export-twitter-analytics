@@ -78,27 +78,26 @@ $(document).ready(function() {
 		keys = getKeys('#tweetkeys','data-prop');
 	});	
 	//Get tweets by taking raw copy/pasted obj input and getting the array of objs inside
-	function getTweetsArray(textarea) {
+	var getTweetsArray = function (textarea) {
 		var textareaValue = $(textarea).val();
 		if (textareaValue.search('statuses')) {		
 			return $.parseJSON(textareaValue).statuses;	
 		}
-	}	
+	};	
 	//Generate new filtered array of objs and print them out on screen
-	function generate(tweets,keys) {	
+	var generate = function (tweets,keys) {	
 		keys = getKeys('#tweetkeys','data-prop');
 		var jsonOutput = simplifyTweets(tweets, keys);
 console.log(jsonOutput);
-		$('.output-display').text(JSON.stringify(jsonOutput));
+		//$('.output-display').text(JSON.stringify(jsonOutput));
 		$('.output-display').append(
 			'<h1>'+friendlyNames+'</h1>'
 		);
 		for (var i=0; i < jsonOutput.length; i++) {
 			$('.output-display').append('<p>'+JSON.stringify(jsonOutput[i], null, 4)+'</p><hr>');
 		}		
-	}	
-	
-	
+	};	
+		
 	$('.generate').bind('click', function() {
 		// ** Must regenerate tweet array, for case if the user dropped a key and now wants it back
 		var tweets = getTweetsArray('.json-input');
@@ -113,9 +112,26 @@ var filter = require('../scripts/filter.js');
 // OUTPUT: totally simplified tweet objects in array, formatted as friendlyName: propValue
 module.exports = function(rawArray, keysArray){
 	
-	function findDisplayUrl(rawURL, entitiesObj) {
-		return 'boop';
-	}
+	var findDisplayUrl = function (rawURL, entitiesObj) {
+	//this function DOES NOT assume that the rawURL is a media or URL object!
+		var urlsArray = entitiesObj.urls;
+		var mediaArray = entitiesObj.media;
+		var urlsLength = urlsArray.length;
+		var mediaLength = mediaArray.length;
+		//search urls array
+		for (var i=0; i < urlsLength; i++) {
+		  if (urlsArray[i].url == rawURL) {
+		  	return urlsArray[i].display;
+		  }
+		}		
+			//search media array
+			for (var j=0; j < mediaLength; j++) {
+			  if (mediaArray[j].url == rawURL) {
+			  	return mediaArray[j].display_url;
+			  }
+			}
+		return '';
+	};
 	
 	//Save copy of raw array for special cases
 	var originArray = $.extend(true, [], rawArray);	
@@ -134,12 +150,7 @@ module.exports = function(rawArray, keysArray){
 					var rawEntities = originArray[i].entities;
 					for (linkKey in tweet.links) {
 						//linkKey is minified twitter URL
-						newObj['*TEST*_'+j] = linkKey;
-						//if media_url == linkKey
-							//return entities.media.display_url
-						//if
-						newObj['*FN-RETURN* '+j] = findDisplayUrl(linkKey, rawEntities)
-						newObj['link '+j] = rawEntities;
+						newObj['link '+j] = findDisplayUrl(linkKey, rawEntities);			
 						newObj['click count '+j] = tweet.links[linkKey];
 						j++
 					}

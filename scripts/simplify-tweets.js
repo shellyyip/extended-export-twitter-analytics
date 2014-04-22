@@ -5,9 +5,26 @@ var filter = require('../scripts/filter.js');
 // OUTPUT: totally simplified tweet objects in array, formatted as friendlyName: propValue
 module.exports = function(rawArray, keysArray){
 	
-	function findDisplayUrl(rawURL, entitiesObj) {
-		return 'boop';
-	}
+	var findDisplayUrl = function (rawURL, entitiesObj) {
+	//this function DOES NOT assume that the rawURL is a media or URL object!
+		var urlsArray = entitiesObj.urls;
+		var mediaArray = entitiesObj.media;
+		var urlsLength = urlsArray.length;
+		var mediaLength = mediaArray.length;
+		//search urls array
+		for (var i=0; i < urlsLength; i++) {
+		  if (urlsArray[i].url == rawURL) {
+		  	return urlsArray[i].display;
+		  }
+		}		
+			//search media array
+			for (var j=0; j < mediaLength; j++) {
+			  if (mediaArray[j].url == rawURL) {
+			  	return mediaArray[j].display_url;
+			  }
+			}
+		return '';
+	};
 	
 	//Save copy of raw array for special cases
 	var originArray = $.extend(true, [], rawArray);	
@@ -26,12 +43,7 @@ module.exports = function(rawArray, keysArray){
 					var rawEntities = originArray[i].entities;
 					for (linkKey in tweet.links) {
 						//linkKey is minified twitter URL
-						newObj['*TEST*_'+j] = linkKey;
-						//if media_url == linkKey
-							//return entities.media.display_url
-						//if
-						newObj['*FN-RETURN* '+j] = findDisplayUrl(linkKey, rawEntities)
-						newObj['link '+j] = rawEntities;
+						newObj['link '+j] = findDisplayUrl(linkKey, rawEntities);			
 						newObj['click count '+j] = tweet.links[linkKey];
 						j++
 					}
