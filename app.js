@@ -61,7 +61,7 @@ return d||(f=$b[b],$b[b]=e,e=null!=c(a,b,d)?b.toLowerCase():null,$b[b]=f),e}});v
 var $ = require('jquery');
 var getKeys = require('../scripts/getcheckboxes.js');
 var simplifyTweets = require('../scripts/simplify-tweets.js');
-//var outputCSV = require('../scripts/output-csv.js');//function
+var outputCSV = require('../scripts/output-csv.js');//allows download csv button to work. Button must have class download-csv
 // MAIN.JS
 //https://ads.twitter.com/accounts/xxxxxx/timeline_activity/tweet_data
 $(document).ready(function() {
@@ -87,26 +87,76 @@ $(document).ready(function() {
 	//Generate new filtered array of objs and print them out on screen
 	var generate = function (tweets,keys) {	
 		keys = getKeys('#tweetkeys','data-prop');
-		var jsonOutput = simplifyTweets(tweets, keys);
-		$('.output-display').html('');//clear previous content
+		var simpTweets = simplifyTweets(tweets, keys);
+		$('.output-display, .csv-display').html('');//clear previous content
+		$('.csv-display').text(outputCSV(simpTweets));
 		$('.output-display').append(
 			'<h1>'+friendlyNames+'</h1>'
 		);
-		for (var i=0; i < jsonOutput.length; i++) {
-			$('.output-display').append('<p>'+JSON.stringify(jsonOutput[i], null, 4)+'</p><hr>');
+		for (var i=0; i < simpTweets.length; i++) {
+			$('.output-display').append('<p>'+JSON.stringify(simpTweets[i], null, 4)+'</p><hr>');
 		}		
 	};	
 		
 	$('.generate').bind('click', function() {
 		// ** Must regenerate tweet array, for case if the user dropped a key and now wants it back
 		var tweets = getTweetsArray('.json-input');
-		generate(tweets,keys);		
+		generate(tweets,keys);	
+		console.log('tweets: '+tweets);
+		outputCSV(tweets);
 	});
 });
-},{"../scripts/getcheckboxes.js":2,"../scripts/simplify-tweets.js":5,"jquery":3}],5:[function(require,module,exports){
+},{"../scripts/getcheckboxes.js":2,"../scripts/output-csv.js":5,"../scripts/simplify-tweets.js":6,"jquery":3}],5:[function(require,module,exports){
+// *********
+// ** Takes an array of SIMPLE json objects and returns a CSV.
+// ** Objects must NOT have any nested keys
+// ** This function also assumes that every object has the same keys, even if their value is empty.
+
+var objArray = require('../scripts/simplify-tweets.js');//function
+
+module.exports = function(objArray){
+	//Create array of desired properties using first object in array
+	var properties = [];
+	for (key in objArray[0]) {
+		properties.push(key);
+	}
+	// // //process text for CSV output
+	// // var text = tweets[i].text;
+	 // // text = text.replace(/"/g,'""');
+	// // //convert time
+	// // var time = new Date(tweets[i].timestamp);
+	// // // text = text.replace(/,/g,'","');
+
+//Prep content for CSV export. *** FOR TEXT, must put quotes around to prevent CSV from delimiting at "real" commas!
+var headers = '';
+for (var i=0; i < properties.length; i++){
+  headers = headers+properties[i]+',';
+}
+var rows = '';
+for (var i=0; i < objArray.length; i++) {
+	var newRow = '';
+	for (var key in objArray[i]) {
+		var value = objArray[i][key];
+		value = value.replace(/"/g,'""');
+		newRow = newRow + value + ',';
+	}
+	//Lop off last comma & replace with newline
+	newRow = newRow.substring(0, newRow.length - 1);
+	newRow = newRow+'\r\n';
+	//Add the row to rows
+	rows = rows+newRow;
+}
+
+//Lop off last comma
+headers = headers.substring(0, headers.length - 1);
+
+var csv = headers+'\r\n'+rows;
+return csv;
+};
+},{"../scripts/simplify-tweets.js":6}],6:[function(require,module,exports){
 var filter = require('../scripts/filter.js');
 // **** SIMPLIFY-TWEETS.JS
-// * Filters raw tweet array to desired keys, then returns a simplified, remapped array of tweets
+// * Filters raw tweet array to desired keys, then returns a simplified, remapped array of tweets using friendly names
 // INPUT: array of standard tweet objects (formatted like their API), array of obj of desired properties, optimally mapped as prop:friendlyName
 // OUTPUT: totally simplified tweet objects in array, formatted as friendlyName: propValue
 // Note to self: convert timestamp to datetime via new Date(timestamp);

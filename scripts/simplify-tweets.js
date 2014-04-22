@@ -1,6 +1,6 @@
 var filter = require('../scripts/filter.js');
 // **** SIMPLIFY-TWEETS.JS
-// * Filters raw tweet array to desired keys, then returns a simplified, remapped array of tweets
+// * Filters raw tweet array to desired keys, then returns a simplified, remapped array of tweets using friendly names
 // INPUT: array of standard tweet objects (formatted like their API), array of obj of desired properties, optimally mapped as prop:friendlyName
 // OUTPUT: totally simplified tweet objects in array, formatted as friendlyName: propValue
 // Note to self: convert timestamp to datetime via new Date(timestamp);

@@ -45,17 +45,20 @@
 					<h3>Stats</h3>
 					<ul>
 						<li>
-							<input type="checkbox" name="Retweets" data-prop="retweets">Retweets
+							<input type="checkbox" name="Retweets" data-prop="retweets" disabled>Retweets
 						</li>
 						<li>
-							<input type="checkbox" name="Faves" data-prop="faves">Faves
+							<input type="checkbox" name="Faves" data-prop="faves" disabled>Faves
 						</li>
 						<li>
-							<input type="checkbox" name="Replies" data-prop="replies">Replies
+							<input type="checkbox" name="Replies" data-prop="replies" disabled>Replies
+						</li>
+						<li>
+							<input type="checkbox" name="Reach" data-prop="reach">Reach  (note to self: in badges)
 						</li>
 					</ul>
 					
-					<h3>Sponsored Info  <span class="helptext">Each returns "true" or "false" and also returns sponsored start & end dates, campaign names, and campaign start & end dates</span></h3>
+					<h3>Sponsored & Campaign Info </h3>
 					<ul>
 						<li>
 							<input type="checkbox" name="Is Sponsored?" data-prop="is_sponsored">Is Sponsored?
@@ -84,33 +87,19 @@
 					<h3>Huh?</h3>
 					<ul>
 						<li>
-							<input type="checkbox" name="Index" data-prop="index">Tweet Index
-						</li>
-						<li>
-							<input type="checkbox" name="Badges" data-prop="badges" disabled>Badges  <span class="helptext">Currently does not work until I figure out what this is</span>
+							<input type="checkbox" name="Index" data-prop="index">Tweet Index <span class="helptext">Returns a 7 digit number of some sort (let me know if you know what this is!)</span>
 						</li>
 					</ul>
-					
-					
-					
-					
-					
 				</div>
 			</li>
 			<li>
 				<button class="generate">GENERATE!</button>
 			</li>
-			<li>If the data you pasted is valid, a table should appear below and the Download as CSV link should light up. Yay!</li>
-			<li>Click to download as CSV.</li>
+			<li>
+				<button class="download-csv">DOWNLOAD CSV!</button>
+			</li>
 		</ol>
-		<section class="dev-notes">
-			<ul>
-				<li>As of now, "clicks" only displays the click count for the first link in the tweet (whether it's an uploaded photo or pasted-in link). Still working on getting clicks for each link.</li>
-			</ul>
-		</section>
-		<section class="output-buttons">
-			<a class="download-csv">Download as CSV</a>
-		</section>
+		<pre class="csv-display"></pre>
 		<pre class="output-display"></pre>
 	</div>
 </body>

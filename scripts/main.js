@@ -1,7 +1,7 @@
 var $ = require('jquery');
 var getKeys = require('../scripts/getcheckboxes.js');
 var simplifyTweets = require('../scripts/simplify-tweets.js');
-//var outputCSV = require('../scripts/output-csv.js');//function
+var outputCSV = require('../scripts/output-csv.js');//allows download csv button to work. Button must have class download-csv
 // MAIN.JS
 //https://ads.twitter.com/accounts/xxxxxx/timeline_activity/tweet_data
 $(document).ready(function() {
@@ -27,19 +27,22 @@ $(document).ready(function() {
 	//Generate new filtered array of objs and print them out on screen
 	var generate = function (tweets,keys) {	
 		keys = getKeys('#tweetkeys','data-prop');
-		var jsonOutput = simplifyTweets(tweets, keys);
-		$('.output-display').html('');//clear previous content
+		var simpTweets = simplifyTweets(tweets, keys);
+		$('.output-display, .csv-display').html('');//clear previous content
+		$('.csv-display').text(outputCSV(simpTweets));
 		$('.output-display').append(
 			'<h1>'+friendlyNames+'</h1>'
 		);
-		for (var i=0; i < jsonOutput.length; i++) {
-			$('.output-display').append('<p>'+JSON.stringify(jsonOutput[i], null, 4)+'</p><hr>');
+		for (var i=0; i < simpTweets.length; i++) {
+			$('.output-display').append('<p>'+JSON.stringify(simpTweets[i], null, 4)+'</p><hr>');
 		}		
 	};	
 		
 	$('.generate').bind('click', function() {
 		// ** Must regenerate tweet array, for case if the user dropped a key and now wants it back
 		var tweets = getTweetsArray('.json-input');
-		generate(tweets,keys);		
+		generate(tweets,keys);	
+		console.log('tweets: '+tweets);
+		outputCSV(tweets);
 	});
 });

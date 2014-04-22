@@ -1,65 +1,35 @@
-//Take the array of headers the user wants, and the curated array of objects,and orrange into CSV.
-var tweets = require('../scripts/filter.js');//function
-module.exports = function(tweets){
-	var output = [];
-	//What keys do we want?
-	var properties = ["status_id","time","tweet_text","faves","retweets","replies","link","picture","clicks","reach"];
-//Loop through each member of tweets array
-for (var i = 0; i < tweets.length; i++) {
-	
-	var link = tweets[i].links;
-	var linkclicks = '';
-	for (var key in link) {
-	  linkclicks = link[key];
+// *********
+// ** Takes an array of SIMPLE json objects and returns a CSV.
+// ** Objects must NOT have any nested keys
+// ** This function also assumes that every object has the same keys, even if their value is empty.
+
+var objArray = require('../scripts/simplify-tweets.js');//function
+
+module.exports = function(objArray){
+	//Create array of desired properties using first object in array
+	var properties = [];
+	for (key in objArray[0]) {
+		properties.push(key);
 	}
-	// Find an external link URL
-	try {
-		var linkurl = tweets[i].entities.urls[0].expanded;
-	} catch(error) {
-		var linkurl = '';
-	}
-	// Find an embedded photo
-	try {
-		var photourl = tweets[i].entities.media[0].display_url;
-	} catch(error) {
-		var photourl = '';
-	}
-	
-	var badges = tweets[i].badges;
-	var reach = '';
-	for (var key in badges) {
-	  reach = badges[key];
-	}
-	//process text for CSV output
-	var text = tweets[i].text;
-	 text = text.replace(/"/g,'""');
-	//convert time
-	var time = new Date(tweets[i].timestamp);
-	// text = text.replace(/,/g,'","');
-	var newRow = 
-		output.push ({
-		  "status_id": tweets[i].id,
-		  "time": time,
-		  "tweet_text": '"'+text+'"',
-		  "faves": tweets[i].stats.faves,
-		  "retweets": tweets[i].stats.retweets,
-		  "replies": tweets[i].stats.replies,
-		  "link": linkurl,
-		  "photo": photourl,
-		  "clicks": linkclicks,
-		  "reach": reach
-		});
-};
+	// // //process text for CSV output
+	// // var text = tweets[i].text;
+	 // // text = text.replace(/"/g,'""');
+	// // //convert time
+	// // var time = new Date(tweets[i].timestamp);
+	// // // text = text.replace(/,/g,'","');
+
 //Prep content for CSV export. *** FOR TEXT, must put quotes around to prevent CSV from delimiting at "real" commas!
 var headers = '';
 for (var i=0; i < properties.length; i++){
   headers = headers+properties[i]+',';
 }
 var rows = '';
-for (var i=0; i < output.length; i++) {
+for (var i=0; i < objArray.length; i++) {
 	var newRow = '';
-	for (var key in output[i]) {
-		newRow = newRow+output[i][key]+',';
+	for (var key in objArray[i]) {
+		var value = objArray[i][key];
+		value = value.replace(/"/g,'""');
+		newRow = newRow + value + ',';
 	}
 	//Lop off last comma & replace with newline
 	newRow = newRow.substring(0, newRow.length - 1);
@@ -72,12 +42,5 @@ for (var i=0; i < output.length; i++) {
 headers = headers.substring(0, headers.length - 1);
 
 var csv = headers+'\r\n'+rows;
-
-//$('.output-display').text(csv);
-
-$('.download-csv').attr({
-		href: 'data:application/csv,' + encodeURI(csv),	
-		target: '_blank',
-		download: 'twitter-export.csv'	
-	});
+return csv;
 };
