@@ -137,7 +137,11 @@ for (var i=0; i < objArray.length; i++) {
 	var newRow = '';
 	for (var key in objArray[i]) {
 		var value = objArray[i][key];
-		value = value.replace(/"/g,'""');
+		if (typeof value == 'string') {
+			value = value.replace(/"/g,'""');
+		}
+		
+		
 		newRow = newRow + value + ',';
 	}
 	//Lop off last comma & replace with newline
