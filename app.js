@@ -84,6 +84,7 @@ $(document).ready(function() {
 			return $.parseJSON(textareaValue).statuses;	
 		}
 	};	
+		
 	//Generate new filtered array of objs and print them out on screen
 	var generate = function (tweets,keys) {	
 		keys = getKeys('#tweetkeys','data-prop');
@@ -98,12 +99,31 @@ $(document).ready(function() {
 		}		
 	};	
 		
-	$('.generate').bind('click', function() {
+	$('.generate-button').bind('click', function() {
 		// ** Must regenerate tweet array, for case if the user dropped a key and now wants it back
 		var tweets = getTweetsArray('.json-input');
 		generate(tweets,keys);	
+		var csv = outputCSV(tweets);
 		console.log('tweets: '+tweets);
-		outputCSV(tweets);
+		//Activate Download CSV button	
+		$('.download-csv').attr({
+			href: 'data:application/csv,' + encodeURI(csv),	
+			target: '_blank',
+			download: 'twitter-export.csv'	
+		});	
+	});
+	$('.download-csv').bind('click', function() {
+		// ** Must regenerate tweet array, for case if the user dropped a key and now wants it back
+		var simpTweets = simplifyTweets(getTweetsArray('.json-input'),keys);
+		var csv = outputCSV(tweets);
+		$('.csv-display').html('');//clear previous content
+		
+		//Activate Download CSV button	
+		$('.download-csv').attr({
+			href: 'data:application/csv,' + encodeURI(csv),	
+			target: '_blank',
+			download: 'twitter-export.csv'	
+		});	
 	});
 });
 },{"../scripts/getcheckboxes.js":2,"../scripts/output-csv.js":5,"../scripts/simplify-tweets.js":6,"jquery":3}],5:[function(require,module,exports){
