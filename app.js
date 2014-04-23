@@ -47,6 +47,7 @@ module.exports = function(elem,attr){
 	return output;
 };
 },{}],3:[function(require,module,exports){
+var order = require('../scripts/json-order.js');
 // ***********
 // Module: json-level
 // * Takes an array of objects who don't all have the same properties, and adds the missing properties with empty values, so at the end all objects have the same props.
@@ -75,27 +76,31 @@ module.exports = function(objArray){
 	var leveledObjs = [];
 	// Loop through each obj in array AGAIN	
 	for (var i=0;i<objArray.length;i++) {
+		var object = objArray[i];
 		  //Loop through each key in needed props
 		  for (var j=0;j<neededProps.length;j++) {
 		  		//if neededKey in not object
-		  		if (objArray[i].hasOwnProperty(neededProps[j]) == false) {
+		  		if (object.hasOwnProperty(neededProps[j]) == false) {
 		  			//add the neededProp with empty string value
-		  			objArray[i][neededProps[j]] = '';
+		  			object[neededProps[j]] = '';
 		  		}
 		  }
+		  //puts props in order
+		  object = order(object,neededProps);
 		  //then push leveled object to new array
-		  leveledObjs.push(objArray[i]);
+		  leveledObjs.push(object);
 	}
 	return leveledObjs;
 };
-},{}],4:[function(require,module,exports){
+},{"../scripts/json-order.js":4}],4:[function(require,module,exports){
 // ***********
 // Module: json-order
 // * Orders the properties in a JSON object to a desired order.
 // * Takes an object and an array of properties in desired order.
 module.exports = function(object,orderArray){
-	
-}
+	var orderedObj = JSON.parse(JSON.stringify(object, orderArray , 4));	
+	return orderedObj;
+};
 },{}],5:[function(require,module,exports){
 (function (global){
 (function browserifyShim(module, exports, define, browserify_shim__define__module__export__) {
@@ -179,15 +184,14 @@ $(document).ready(function() {
 // ** Fetch CSV headers from first object (again, because we're assuming all objs have same keys)
 
 var objArray = require('../scripts/simplify-tweets.js');//function
-var levelOut = require('../scripts/json-level.js');
-var order = require('../scripts/json-order.js');
 
 module.exports = function(objArray){
 	//Create array of desired properties using largest object in array
 	var properties = [];
 	for (key in objArray[0]) {
 		properties.push(key);
-	}	
+	}
+	
 var escapify = function(string) {
 	string = string.replace(/"/g,'""');
 	string = '"' + string + '"';
@@ -225,7 +229,7 @@ headers = headers.substring(0, headers.length - 1);
 var csv = headers+'\r\n'+rows;
 return csv;
 };
-},{"../scripts/json-level.js":3,"../scripts/json-order.js":4,"../scripts/simplify-tweets.js":8}],8:[function(require,module,exports){
+},{"../scripts/simplify-tweets.js":8}],8:[function(require,module,exports){
 var filter = require('../scripts/filter.js');
 var levelOut = require('../scripts/json-level.js');
 // **** SIMPLIFY-TWEETS.JS
@@ -303,6 +307,7 @@ module.exports = function(rawArray, keysArray){
 	}
 	// * Need to replace undefined with empty strings
 	output = levelOut(output);//adds props with empty vals so all objs have same props (ie. link 2, link 3, etc.). This is for easier CSV processing.
+
 	return output;
 };
 },{"../scripts/filter.js":1,"../scripts/json-level.js":3}]},{},[6]);

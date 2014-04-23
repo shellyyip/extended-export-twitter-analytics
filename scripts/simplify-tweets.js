@@ -75,5 +75,6 @@ module.exports = function(rawArray, keysArray){
 	}
 	// * Need to replace undefined with empty strings
 	output = levelOut(output);//adds props with empty vals so all objs have same props (ie. link 2, link 3, etc.). This is for easier CSV processing.
+
 	return output;
 };

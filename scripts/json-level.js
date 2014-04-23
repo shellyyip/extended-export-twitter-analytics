@@ -1,3 +1,4 @@
+var order = require('../scripts/json-order.js');
 // ***********
 // Module: json-level
 // * Takes an array of objects who don't all have the same properties, and adds the missing properties with empty values, so at the end all objects have the same props.
@@ -26,16 +27,19 @@ module.exports = function(objArray){
 	var leveledObjs = [];
 	// Loop through each obj in array AGAIN	
 	for (var i=0;i<objArray.length;i++) {
+		var object = objArray[i];
 		  //Loop through each key in needed props
 		  for (var j=0;j<neededProps.length;j++) {
 		  		//if neededKey in not object
-		  		if (objArray[i].hasOwnProperty(neededProps[j]) == false) {
+		  		if (object.hasOwnProperty(neededProps[j]) == false) {
 		  			//add the neededProp with empty string value
-		  			objArray[i][neededProps[j]] = '';
+		  			object[neededProps[j]] = '';
 		  		}
 		  }
+		  //puts props in order
+		  object = order(object,neededProps);
 		  //then push leveled object to new array
-		  leveledObjs.push(objArray[i]);
+		  leveledObjs.push(object);
 	}
 	return leveledObjs;
 };
