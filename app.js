@@ -92,17 +92,21 @@ module.exports = function(objArray){
 	var leveledObjs = [];
 	// Loop through each obj in array AGAIN
 	for (var i=0;i<objArray.length;i++) {
-		  // get props for each object
-		  var props = [];
-		  for (key in objArray[i]) {
-		    props.push(key);   
-		  }
+		  // // get props for each object
+		  // var props = [];
+		  // for (key in objArray[i]) {
+		    // props.push(key);   
+		  // }
 		  // find differences between obj's props and needed props
-		  console.log(neededProps);
-		  
 		  //Loop through each key in needed props
-		  
-		  	// if
+		  for (var j=0;j<neededProps.length;j++) {
+		  	console.log(neededProps[j]);
+		  	console.log(objArray[i].hasOwnProperty(neededProps[j]));
+		  		if (objArray[i].hasOwnProperty(neededProps[j]) == false) {//if neededKey in object
+		  			//add the neededProp with empty string value
+		  			objArray[i][neededProps[j]] = '';
+		  		}
+		  }
 		  
 		  // var diff = $(neededProps).not(props).get();//array
 		  // //loop through diff array and add each index as key with empty string value to obj
@@ -197,8 +201,6 @@ $(document).ready(function() {
 // ** Fetch CSV headers from first object (again, because we're assuming all objs have same keys)
 
 var objArray = require('../scripts/simplify-tweets.js');//function
-var levelOut = require('../scripts/json-level.js');//function
-objArray = levelOut(objArray);//adds props with empty vals so all objs have same props (ie. link 2, link 3, etc.). This is for easier CSV processing.
 
 module.exports = function(objArray){
 	//Create array of desired properties using largest object in array
@@ -244,8 +246,9 @@ headers = headers.substring(0, headers.length - 1);
 var csv = headers+'\r\n'+rows;
 return csv;
 };
-},{"../scripts/json-level.js":3,"../scripts/simplify-tweets.js":7}],7:[function(require,module,exports){
+},{"../scripts/simplify-tweets.js":7}],7:[function(require,module,exports){
 var filter = require('../scripts/filter.js');
+var levelOut = require('../scripts/json-level.js');
 // **** SIMPLIFY-TWEETS.JS
 // * Filters raw tweet array to desired keys, then returns a simplified, remapped array of tweets using friendly names
 // INPUT: array of standard tweet objects (formatted like their API), array of obj of desired properties, optimally mapped as prop:friendlyName
@@ -319,6 +322,8 @@ module.exports = function(rawArray, keysArray){
 		}
 		output.push(newObj);
 	}
+	// * Need to replace undefined with empty strings
+	output = levelOut(output);//adds props with empty vals so all objs have same props (ie. link 2, link 3, etc.). This is for easier CSV processing.
 	return output;
 };
-},{"../scripts/filter.js":1}]},{},[5]);
+},{"../scripts/filter.js":1,"../scripts/json-level.js":3}]},{},[5]);

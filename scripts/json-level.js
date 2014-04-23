@@ -43,17 +43,21 @@ module.exports = function(objArray){
 	var leveledObjs = [];
 	// Loop through each obj in array AGAIN
 	for (var i=0;i<objArray.length;i++) {
-		  // get props for each object
-		  var props = [];
-		  for (key in objArray[i]) {
-		    props.push(key);   
-		  }
+		  // // get props for each object
+		  // var props = [];
+		  // for (key in objArray[i]) {
+		    // props.push(key);   
+		  // }
 		  // find differences between obj's props and needed props
-		  console.log(neededProps);
-		  
 		  //Loop through each key in needed props
-		  
-		  	// if
+		  for (var j=0;j<neededProps.length;j++) {
+		  	console.log(neededProps[j]);
+		  	console.log(objArray[i].hasOwnProperty(neededProps[j]));
+		  		if (objArray[i].hasOwnProperty(neededProps[j]) == false) {//if neededKey in object
+		  			//add the neededProp with empty string value
+		  			objArray[i][neededProps[j]] = '';
+		  		}
+		  }
 		  
 		  // var diff = $(neededProps).not(props).get();//array
 		  // //loop through diff array and add each index as key with empty string value to obj

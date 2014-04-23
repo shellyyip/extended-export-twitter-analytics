@@ -5,8 +5,6 @@
 // ** Fetch CSV headers from first object (again, because we're assuming all objs have same keys)
 
 var objArray = require('../scripts/simplify-tweets.js');//function
-var levelOut = require('../scripts/json-level.js');//function
-objArray = levelOut(objArray);//adds props with empty vals so all objs have same props (ie. link 2, link 3, etc.). This is for easier CSV processing.
 
 module.exports = function(objArray){
 	//Create array of desired properties using largest object in array
