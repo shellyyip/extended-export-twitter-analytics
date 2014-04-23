@@ -35,14 +35,16 @@ module.exports = function(input, properties){
 },{}],2:[function(require,module,exports){
 // elem = HTML container of checkboxes
 // attr = desired checkbox attribute to collect
-// Returns an array of the attributes of the checked checkboxes.
+// Returns an array of the attribute values of the checked checkboxes.
 module.exports = function(elem,attr){
 	var output = [];
-	//only get checkboxes with requested attribute
-	var checkboxes = $(elem).find('input[type=checkbox][checked]['+attr+']');	
-	$('input[type=checkbox][checked]['+attr+']').each(function() {
-		var item = $(this).attr(attr);
-		output.push(item);
+	//only get checkboxes with requested attribute that have property checked = true
+	var checkboxes = $(elem).find('input[type=checkbox]['+attr+']');	
+	checkboxes.each(function() {
+		if (this.checked == true) {
+			var item = $(this).attr(attr);//get value of desired attribute
+			output.push(item);
+		}
 	});
 	return output;
 };
@@ -98,7 +100,7 @@ module.exports = function(objArray){
 // * Orders the properties in a JSON object to a desired order.
 // * Takes an object and an array of properties in desired order.
 module.exports = function(object,orderArray){
-	var orderedObj = JSON.parse(JSON.stringify(object, orderArray , 4));	
+	var orderedObj = JSON.parse(JSON.stringify(object, orderArray));	
 	return orderedObj;
 };
 },{}],5:[function(require,module,exports){
@@ -114,26 +116,32 @@ return d||(f=$b[b],$b[b]=e,e=null!=c(a,b,d)?b.toLowerCase():null,$b[b]=f),e}});v
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],6:[function(require,module,exports){
-var $ = require('jquery');
-var getKeys = require('../scripts/getcheckboxes.js');
+var $ = require('../scripts/lib/jquery-2.1.0.min.js');
+var getKeys = require('../scripts/getcheckboxes.js');//gather array of checked checkboxes
 var simplifyTweets = require('../scripts/simplify-tweets.js');
 var outputCSV = require('../scripts/output-csv.js');//allows download csv button to work. Button must have class download-csv
 // MAIN.JS
 //https://ads.twitter.com/accounts/xxxxxx/timeline_activity/tweet_data
 $(document).ready(function() {
-	//Get keys
-	var keys;
-	var options;	
-	//jquery to automatically make a checkbox checked without having to submit
-	$('#tweetkeys').find('input[type=checkbox]').bind('click', function() {
-		if ($(this).attr('checked') == 'checked') {
-			$(this).attr('checked',false);
-		} else {
-			$(this).attr('checked',true);
-		}
-		options = getKeys('#tweetkeys','data-option');
-		keys = getKeys('#tweetkeys','data-prop');
-	});	
+	//Checkbox Handling
+	var checkboxLogic = function(container) {
+		$(container).find('input[type=checkbox]').click(function() {
+			console.log();
+			// if (this.checked == true) {
+				// this.checked = false;
+			// } else {
+				// this.checked = true;
+			// }	
+		});
+	};
+	checkboxLogic('#tweetkeys');
+	// var checkAll = function(elem) {
+		// $(elem).bind('click', function() {
+			// $('#tweetkeys').find('input[type=checkbox]').prop('checked',true).attr('checked',true);
+		// });
+	// };
+	// checkAll('[data-onclick=all]');
+	
 	//Get tweets by taking raw copy/pasted obj input and getting the array of objs inside
 	var getTweetsArray = function (textarea) {
 		var textareaValue = $(textarea).val();
@@ -143,8 +151,10 @@ $(document).ready(function() {
 	};	
 		
 	//Generate new filtered array of objs and print them out on screen
-	var generate = function (tweets,keys) {	
-		keys = getKeys('#tweetkeys','data-prop');
+	var generate = function () {	
+		var keys = getKeys('#tweetkeys','data-prop');
+		console.log(keys);
+		var tweets = getTweetsArray('.json-input');
 		var simpTweets = simplifyTweets(tweets, keys);
 		var csv = outputCSV(simpTweets);
 		//Output data onto screen
@@ -165,18 +175,16 @@ $(document).ready(function() {
 	};	
 		
 	$('.generate-button').bind('click', function() {
-		// ** Must regenerate tweet array, for case if the user dropped a key and now wants it back
-		var tweets = getTweetsArray('.json-input');
-		generate(tweets,keys);	
+		generate();	
 	});
-	$('.download-csv').bind('click', function() {
-		// ** Must regenerate tweet array, for case if the user dropped a key and now wants it back
-		var simpTweets = simplifyTweets(getTweetsArray('.json-input'),keys);
-		var csv = outputCSV(tweets);
-		$('.csv-display').html('');//clear previous content
-	});
+	// $('.download-csv').bind('click', function() {
+		// // ** Must regenerate tweet array, for case if the user dropped a key and now wants it back
+		// var simpTweets = simplifyTweets(getTweetsArray('.json-input'),keys);
+		// var csv = outputCSV(tweets);
+		// $('.csv-display').html('');//clear previous content
+	// });
 });
-},{"../scripts/getcheckboxes.js":2,"../scripts/output-csv.js":7,"../scripts/simplify-tweets.js":8,"jquery":5}],7:[function(require,module,exports){
+},{"../scripts/getcheckboxes.js":2,"../scripts/lib/jquery-2.1.0.min.js":5,"../scripts/output-csv.js":7,"../scripts/simplify-tweets.js":8}],7:[function(require,module,exports){
 // *********
 // ** Takes an array of SIMPLE json objects and returns a CSV.
 // ** Objects must NOT have any nested keys
