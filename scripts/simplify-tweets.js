@@ -1,4 +1,3 @@
-var filter = require('../scripts/filter.js');
 var levelOut = require('../scripts/json-level.js');
 // **** SIMPLIFY-TWEETS.JS
 // * Filters raw tweet array to desired keys, then returns a simplified, remapped array of tweets using friendly names
@@ -6,6 +5,7 @@ var levelOut = require('../scripts/json-level.js');
 // OUTPUT: totally simplified tweet objects in array, formatted as friendlyName: propValue
 // Note to self: convert timestamp to datetime via new Date(timestamp);
 module.exports = function(rawArray, keysArray){
+	
 	var findFullUrl = function (rawURL, entitiesObj) {
 	//this function DOES NOT assume that the rawURL is a media or URL object!
 		var urlsArray = entitiesObj.urls;
@@ -28,14 +28,14 @@ module.exports = function(rawArray, keysArray){
 	};
 	
 	//Save copy of raw array for special cases
-	var originArray = $.extend(true, [], rawArray);	
+	//var originArray = $.extend(true, [], rawArray);	
 	//Get filtered tweet array
-	var tweetsArray = filter(rawArray, keysArray);
+	//var tweetsArray = rawArray;
 	var output = [];
 	//loop through tweets and remap
-	for (var i=0; i < tweetsArray.length; i++) {
+	for (var i=0; i < rawArray.length; i++) {
 		var newObj = {};
-		var tweet = tweetsArray[i];
+		var tweet = rawArray[i];
 		var unixTime = tweet.timestamp;
 		var dateObj = new Date(unixTime);	
 		for (var key in keysArray) {
@@ -55,9 +55,20 @@ module.exports = function(rawArray, keysArray){
 						// //newObj['time'] = 05:26:10;
 						// break;
 					break;
+				// *** The Stats group
+				case 'retweets':
+					newObj['retweets'] = tweet.stats.retweets;
+					break;
+				case 'faves':
+					newObj['faves'] = tweet.stats.faves;
+					break;
+				case 'replies':
+					newObj['replies'] = tweet.stats.replies;
+					break;
+				// *** The Entities group
 				case 'links':
 					var j = 1;
-					var rawEntities = originArray[i].entities;
+					var rawEntities = tweet.entities;
 					for (linkKey in tweet.links) {
 						//linkKey is minified twitter URL
 						newObj['link '+j] = findFullUrl(linkKey, rawEntities);			

@@ -1,38 +1,4 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-// ***** FILTER.JS
-//Filters original array of obejcts into a new curated array of JSON.
-//Input & output = array of JSON objs
-module.exports = function(input, properties){
-	var output = [];//array of objects	
-	//check properties (array of keys user wants to filter to)
-		//does it just say "all?"
-		//skip all this jank and return the original JSON raw	
-	function filterKeys(obj,keysArray) { 
-	  	for (var key in obj) {
-	    	if (typeof obj[key] == "object" && $.inArray(key, keysArray) != -1) {
-	    		//if this is a nesting key but we want to keep everything inside
-	    		continue;
-	    	} else if (typeof obj[key] == "object") {
-			    //search the keys of this key's object
-			    filterKeys(obj[key],keysArray);     
-		    } else {
-		      if ($.inArray(key, keysArray) == -1) {
-		        //drop that sucka
-		        delete obj[key];
-		      }
-		    }
-		}
-		return obj;
-	}	
-	//Loop through & filterKeys each member of raw array
-	for (var i = 0; i < input.length; i++) {
-		var obj = input[i];
-		filterKeys(obj,properties);	
-		output.push(obj);	
-	}	
-	return output;
-};
-},{}],2:[function(require,module,exports){
 // elem = HTML container of checkboxes
 // attr = desired checkbox attribute to collect
 // Returns an array of the attribute values of the checked checkboxes.
@@ -48,7 +14,7 @@ module.exports = function(elem,attr){
 	});
 	return output;
 };
-},{}],3:[function(require,module,exports){
+},{}],2:[function(require,module,exports){
 var order = require('../scripts/json-order.js');
 // ***********
 // Module: json-level
@@ -94,7 +60,7 @@ module.exports = function(objArray){
 	}
 	return leveledObjs;
 };
-},{"../scripts/json-order.js":4}],4:[function(require,module,exports){
+},{"../scripts/json-order.js":3}],3:[function(require,module,exports){
 // ***********
 // Module: json-order
 // * Orders the properties in a JSON object to a desired order.
@@ -103,7 +69,7 @@ module.exports = function(object,orderArray){
 	var orderedObj = JSON.parse(JSON.stringify(object, orderArray));	
 	return orderedObj;
 };
-},{}],5:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 (function (global){
 (function browserifyShim(module, exports, define, browserify_shim__define__module__export__) {
 /*! jQuery v2.1.0 | (c) 2005, 2014 jQuery Foundation, Inc. | jquery.org/license */
@@ -115,7 +81,7 @@ return d||(f=$b[b],$b[b]=e,e=null!=c(a,b,d)?b.toLowerCase():null,$b[b]=f),e}});v
 }).call(global, undefined, undefined, undefined, function defineExport(ex) { module.exports = ex; });
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],6:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 var $ = require('../scripts/lib/jquery-2.1.0.min.js');
 var getKeys = require('../scripts/getcheckboxes.js');//gather array of checked checkboxes
 var simplifyTweets = require('../scripts/simplify-tweets.js');
@@ -179,7 +145,7 @@ $(document).ready(function() {
 		// $('.csv-display').html('');//clear previous content
 	// });
 });
-},{"../scripts/getcheckboxes.js":2,"../scripts/lib/jquery-2.1.0.min.js":5,"../scripts/output-csv.js":7,"../scripts/simplify-tweets.js":8}],7:[function(require,module,exports){
+},{"../scripts/getcheckboxes.js":1,"../scripts/lib/jquery-2.1.0.min.js":4,"../scripts/output-csv.js":6,"../scripts/simplify-tweets.js":7}],6:[function(require,module,exports){
 // *********
 // ** Takes an array of SIMPLE json objects and returns a CSV.
 // ** Objects must NOT have any nested keys
@@ -230,8 +196,7 @@ headers = headers.substring(0, headers.length - 1);
 var csv = headers+'\r\n'+rows;
 return csv;
 };
-},{"../scripts/simplify-tweets.js":8}],8:[function(require,module,exports){
-var filter = require('../scripts/filter.js');
+},{"../scripts/simplify-tweets.js":7}],7:[function(require,module,exports){
 var levelOut = require('../scripts/json-level.js');
 // **** SIMPLIFY-TWEETS.JS
 // * Filters raw tweet array to desired keys, then returns a simplified, remapped array of tweets using friendly names
@@ -239,6 +204,7 @@ var levelOut = require('../scripts/json-level.js');
 // OUTPUT: totally simplified tweet objects in array, formatted as friendlyName: propValue
 // Note to self: convert timestamp to datetime via new Date(timestamp);
 module.exports = function(rawArray, keysArray){
+	
 	var findFullUrl = function (rawURL, entitiesObj) {
 	//this function DOES NOT assume that the rawURL is a media or URL object!
 		var urlsArray = entitiesObj.urls;
@@ -261,14 +227,14 @@ module.exports = function(rawArray, keysArray){
 	};
 	
 	//Save copy of raw array for special cases
-	var originArray = $.extend(true, [], rawArray);	
+	//var originArray = $.extend(true, [], rawArray);	
 	//Get filtered tweet array
-	var tweetsArray = filter(rawArray, keysArray);
+	//var tweetsArray = rawArray;
 	var output = [];
 	//loop through tweets and remap
-	for (var i=0; i < tweetsArray.length; i++) {
+	for (var i=0; i < rawArray.length; i++) {
 		var newObj = {};
-		var tweet = tweetsArray[i];
+		var tweet = rawArray[i];
 		var unixTime = tweet.timestamp;
 		var dateObj = new Date(unixTime);	
 		for (var key in keysArray) {
@@ -288,9 +254,20 @@ module.exports = function(rawArray, keysArray){
 						// //newObj['time'] = 05:26:10;
 						// break;
 					break;
+				// *** The Stats group
+				case 'retweets':
+					newObj['retweets'] = tweet.stats.retweets;
+					break;
+				case 'faves':
+					newObj['faves'] = tweet.stats.faves;
+					break;
+				case 'replies':
+					newObj['replies'] = tweet.stats.replies;
+					break;
+				// *** The Entities group
 				case 'links':
 					var j = 1;
-					var rawEntities = originArray[i].entities;
+					var rawEntities = tweet.entities;
 					for (linkKey in tweet.links) {
 						//linkKey is minified twitter URL
 						newObj['link '+j] = findFullUrl(linkKey, rawEntities);			
@@ -311,4 +288,4 @@ module.exports = function(rawArray, keysArray){
 
 	return output;
 };
-},{"../scripts/filter.js":1,"../scripts/json-level.js":3}]},{},[6]);
+},{"../scripts/json-level.js":2}]},{},[5]);
