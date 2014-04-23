@@ -1,46 +1,21 @@
 // *********
 // ** Takes an array of SIMPLE json objects and returns a CSV.
 // ** Objects must NOT have any nested keys
-// ** To get CSV headers, search for the object with the most keys, and extract its keys for headers
+// ** Objects must all have the same keys too (with empty values if needed); if not, use json-level
+// ** Fetch CSV headers from first object (again, because we're assuming all objs have same keys)
 
 var objArray = require('../scripts/simplify-tweets.js');//function
 
 module.exports = function(objArray){
 	//Create array of desired properties using largest object in array
 	var properties = [];
-	//Find object in array with most keys
-	var findBiggestObjIndex = function(objArray) {
-		var biggestIndex;
-	    var leader = 0;
-			for (var i=0;i<objArray.length;i++) {
-				//count keys in current object
-	       var newCount = 0;
-				for(key in objArray[i]) {
-				  if(objArray[i].hasOwnProperty(key)) {//if a key exists
-				    newCount++;
-				  }
-				}	
-	      if (newCount > leader) {
-	        biggestIndex = i;
-	        leader = newCount;
-	      }
-	    }
-	    return biggestIndex;    
-	};
-	
-	for (key in objArray[findBiggestObjIndex(objArray)]) {
+	for (key in objArray[0]) {
 		properties.push(key);
 	}
-	// // //process text for CSV output
-	// // var text = tweets[i].text;
-	 // // text = text.replace(/"/g,'""');
-	// // //convert time
 	// // var time = new Date(tweets[i].timestamp);
-	// // // text = text.replace(/,/g,'","');
 	
 var escapify = function(string) {
 	string = string.replace(/"/g,'""');
-	//string = string.replace(/,/g,'","');
 	string = '"' + string + '"';
 	return string;
 };

@@ -46,6 +46,68 @@ module.exports = function(elem,attr){
 	return output;
 };
 },{}],3:[function(require,module,exports){
+// ***********
+// Module: json-level
+// * Takes an array of objects who don't all have the same properties, and adds the missing properties with empty values, so at the end all objects have the same props.
+// * This assumes all objects in array are SIMPLIFIED; ie. NOT NESTED, no objects for values.
+// * Outputs an array of objects.
+module.exports = function(objArray){
+	// var findBiggestObjIndex = function(objArray) {
+		// var biggestIndex;
+	    // var leader = 0;
+			// for (var i=0;i<objArray.length;i++) {
+				// //count keys in current object
+	       // var newCount = 0;
+				// for(key in objArray[i]) {
+				  // if(objArray[i].hasOwnProperty(key)) {//if a key exists
+				    // newCount++;
+				  // }
+				// }	
+	      // if (newCount > leader) {
+	        // biggestIndex = i;
+	        // leader = newCount;
+	      // }
+	    // }
+	    // return biggestIndex;    
+	// };
+	var collectProps = function(objArray) {
+	  var props = [];
+	  // loop through each obj in array
+	  for (var i=0;i<objArray.length;i++) {
+	    // for each obj, go through each prop
+	    for(key in objArray[i]) {
+	      if(objArray[i].hasOwnProperty(key)) {//if a key exists
+	        // if prop is NOT in props array, add it
+	        if ($.inArray(key, props) == -1) {
+	          props.push(key);	
+	        }
+	      }
+	    }
+	  }
+	  return props;
+	};
+	
+	var neededProps = collectProps(objArray);
+	var leveledObjs = [];
+	// Loop through each obj in array AGAIN
+	for (var i=0;i<objArray.length;i++) {
+		  // get props for each object
+		  var props = [];
+		  for (key in objArray[i]) {
+		    props.push(key);   
+		  }
+		  // find differences between obj's props and needed props
+		  var diff = $(neededProps).not(props).get();//array
+		  //loop through diff array and add each index as key with empty string value to obj
+		  for (var j=0;j<diff.length;j++) {
+		     objArray[i][diff[j]] = '';
+		  }
+		  //then push leveled object to new array
+		  leveledObjs.push(objArray[i]);
+	}
+	return leveledObjs;
+	};
+},{}],4:[function(require,module,exports){
 (function (global){
 (function browserifyShim(module, exports, define, browserify_shim__define__module__export__) {
 /*! jQuery v2.1.0 | (c) 2005, 2014 jQuery Foundation, Inc. | jquery.org/license */
@@ -57,7 +119,7 @@ return d||(f=$b[b],$b[b]=e,e=null!=c(a,b,d)?b.toLowerCase():null,$b[b]=f),e}});v
 }).call(global, undefined, undefined, undefined, function defineExport(ex) { module.exports = ex; });
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 var $ = require('jquery');
 var getKeys = require('../scripts/getcheckboxes.js');
 var simplifyTweets = require('../scripts/simplify-tweets.js');
@@ -121,50 +183,25 @@ $(document).ready(function() {
 		
 	});
 });
-},{"../scripts/getcheckboxes.js":2,"../scripts/output-csv.js":5,"../scripts/simplify-tweets.js":6,"jquery":3}],5:[function(require,module,exports){
+},{"../scripts/getcheckboxes.js":2,"../scripts/output-csv.js":6,"../scripts/simplify-tweets.js":7,"jquery":4}],6:[function(require,module,exports){
 // *********
 // ** Takes an array of SIMPLE json objects and returns a CSV.
 // ** Objects must NOT have any nested keys
-// ** To get CSV headers, search for the object with the most keys, and extract its keys for headers
+// ** Objects must all have the same keys too (with empty values if needed); if not, use json-level
+// ** Fetch CSV headers from first object (again, because we're assuming all objs have same keys)
 
 var objArray = require('../scripts/simplify-tweets.js');//function
 
 module.exports = function(objArray){
 	//Create array of desired properties using largest object in array
 	var properties = [];
-	//Find object in array with most keys
-	var findBiggestObjIndex = function(objArray) {
-		var biggestIndex;
-	    var leader = 0;
-			for (var i=0;i<objArray.length;i++) {
-				//count keys in current object
-	       var newCount = 0;
-				for(key in objArray[i]) {
-				  if(objArray[i].hasOwnProperty(key)) {//if a key exists
-				    newCount++;
-				  }
-				}	
-	      if (newCount > leader) {
-	        biggestIndex = i;
-	        leader = newCount;
-	      }
-	    }
-	    return biggestIndex;    
-	};
-	
-	for (key in objArray[findBiggestObjIndex(objArray)]) {
+	for (key in objArray[0]) {
 		properties.push(key);
 	}
-	// // //process text for CSV output
-	// // var text = tweets[i].text;
-	 // // text = text.replace(/"/g,'""');
-	// // //convert time
 	// // var time = new Date(tweets[i].timestamp);
-	// // // text = text.replace(/,/g,'","');
 	
 var escapify = function(string) {
 	string = string.replace(/"/g,'""');
-	//string = string.replace(/,/g,'","');
 	string = '"' + string + '"';
 	return string;
 };
@@ -197,8 +234,9 @@ headers = headers.substring(0, headers.length - 1);
 var csv = headers+'\r\n'+rows;
 return csv;
 };
-},{"../scripts/simplify-tweets.js":6}],6:[function(require,module,exports){
+},{"../scripts/simplify-tweets.js":7}],7:[function(require,module,exports){
 var filter = require('../scripts/filter.js');
+var levelOut = require('../scripts/json-level.js');
 // **** SIMPLIFY-TWEETS.JS
 // * Filters raw tweet array to desired keys, then returns a simplified, remapped array of tweets using friendly names
 // INPUT: array of standard tweet objects (formatted like their API), array of obj of desired properties, optimally mapped as prop:friendlyName
@@ -257,6 +295,7 @@ module.exports = function(rawArray, keysArray){
 		}
 		output.push(newObj);
 	}
+	output = levelOut(output);
 	return output;
 };
-},{"../scripts/filter.js":1}]},{},[4]);
+},{"../scripts/filter.js":1,"../scripts/json-level.js":3}]},{},[5]);

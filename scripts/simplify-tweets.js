@@ -1,4 +1,5 @@
 var filter = require('../scripts/filter.js');
+var levelOut = require('../scripts/json-level.js');
 // **** SIMPLIFY-TWEETS.JS
 // * Filters raw tweet array to desired keys, then returns a simplified, remapped array of tweets using friendly names
 // INPUT: array of standard tweet objects (formatted like their API), array of obj of desired properties, optimally mapped as prop:friendlyName
@@ -57,5 +58,6 @@ module.exports = function(rawArray, keysArray){
 		}
 		output.push(newObj);
 	}
+	output = levelOut(output);
 	return output;
 };
