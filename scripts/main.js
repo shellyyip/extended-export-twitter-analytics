@@ -7,14 +7,15 @@ var outputCSV = require('../scripts/output-csv.js');//allows download csv button
 $(document).ready(function() {
 	//Get keys
 	var keys;
-	var friendlyNames;	
+	var options;	
+	//jquery to automatically make a checkbox checked without having to submit
 	$('#tweetkeys').find('input[type=checkbox]').bind('click', function() {
 		if ($(this).attr('checked') == 'checked') {
 			$(this).attr('checked',false);
 		} else {
 			$(this).attr('checked',true);
 		}
-		friendlyNames = getKeys('#tweetkeys','name');
+		options = getKeys('#tweetkeys','data-option');
 		keys = getKeys('#tweetkeys','data-prop');
 	});	
 	//Get tweets by taking raw copy/pasted obj input and getting the array of objs inside
@@ -34,7 +35,7 @@ $(document).ready(function() {
 		$('.output-display, .csv-display').html('');//clear previous content
 		$('.csv-display').text(csv);
 		$('.output-display').append(
-			'<h1>'+friendlyNames+'</h1>'
+			'<h1>'+keys+'</h1>'
 		);
 		for (var i=0; i < simpTweets.length; i++) {
 			$('.output-display').append('<p>'+JSON.stringify(simpTweets[i], null, 4)+'</p><hr>');
@@ -57,7 +58,5 @@ $(document).ready(function() {
 		var simpTweets = simplifyTweets(getTweetsArray('.json-input'),keys);
 		var csv = outputCSV(tweets);
 		$('.csv-display').html('');//clear previous content
-		
-		
 	});
 });

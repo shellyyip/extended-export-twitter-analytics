@@ -6,7 +6,6 @@ var levelOut = require('../scripts/json-level.js');
 // OUTPUT: totally simplified tweet objects in array, formatted as friendlyName: propValue
 // Note to self: convert timestamp to datetime via new Date(timestamp);
 module.exports = function(rawArray, keysArray){
-	
 	var findFullUrl = function (rawURL, entitiesObj) {
 	//this function DOES NOT assume that the rawURL is a media or URL object!
 		var urlsArray = entitiesObj.urls;
@@ -36,10 +35,26 @@ module.exports = function(rawArray, keysArray){
 	//loop through tweets and remap
 	for (var i=0; i < tweetsArray.length; i++) {
 		var newObj = {};
-		var tweet = tweetsArray[i];	
+		var tweet = tweetsArray[i];
+		var unixTime = tweet.timestamp;
+		var dateObj = new Date(unixTime);	
 		for (var key in keysArray) {
 			switch(keysArray[key]) {
-				//catch all special cases, like links
+				//catch all tweet properties that need special processing
+				// *** Date/Time
+				case 'timestamp':
+					newObj['Unix timestamp'] = tweet.timestamp;
+					newObj['ISO timestamp'] = dateObj;
+					//switch cases for date/time options
+						// case 'timestamp-iso':
+						// newObj['ISO timestamp'] = dateObj;
+						// // var year = dateObj.getFullYear();
+						// // var month = dateObj.getMonth();
+						// // var day = dateObj.getDate();
+						// // newObj['date'] = year + '-' + month + '-' + day;
+						// //newObj['time'] = 05:26:10;
+						// break;
+					break;
 				case 'links':
 					var j = 1;
 					var rawEntities = originArray[i].entities;
@@ -58,6 +73,7 @@ module.exports = function(rawArray, keysArray){
 		}
 		output.push(newObj);
 	}
-	output = levelOut(output);
+	// * Need to replace undefined with empty strings
+	output = levelOut(output);//adds props with empty vals so all objs have same props (ie. link 2, link 3, etc.). This is for easier CSV processing.
 	return output;
 };

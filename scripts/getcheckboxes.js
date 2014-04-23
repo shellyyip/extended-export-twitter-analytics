@@ -3,8 +3,9 @@
 // Returns an array of the attributes of the checked checkboxes.
 module.exports = function(elem,attr){
 	var output = [];
-	var checkboxes = $(elem).find('input[type=checkbox][checked]');	
-	$('input[type=checkbox][checked]').each(function() {
+	//only get checkboxes with requested attribute
+	var checkboxes = $(elem).find('input[type=checkbox][checked]['+attr+']');	
+	$('input[type=checkbox][checked]['+attr+']').each(function() {
 		var item = $(this).attr(attr);
 		output.push(item);
 	});

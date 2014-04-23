@@ -12,7 +12,6 @@ module.exports = function(objArray){
 	for (key in objArray[0]) {
 		properties.push(key);
 	}
-	// // var time = new Date(tweets[i].timestamp);
 	
 var escapify = function(string) {
 	string = string.replace(/"/g,'""');
@@ -30,6 +29,9 @@ for (var i=0; i < objArray.length; i++) {
 	var newRow = '';
 	for (var key in objArray[i]) {
 		var value = objArray[i][key];
+		if (typeof value == 'string') {			
+			value = escapify(value);
+		}
 		if (typeof value == 'string') {			
 			value = escapify(value);
 		}
