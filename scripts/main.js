@@ -5,24 +5,19 @@ var outputCSV = require('../scripts/output-csv.js');//allows download csv button
 // MAIN.JS
 //https://ads.twitter.com/accounts/xxxxxx/timeline_activity/tweet_data
 $(document).ready(function() {
-	//Checkbox Handling
-	var checkboxLogic = function(container) {
-		$(container).find('input[type=checkbox]').click(function() {
-			console.log();
-			// if (this.checked == true) {
-				// this.checked = false;
-			// } else {
-				// this.checked = true;
-			// }	
+	//elem = check all button element
+	var checkAll = function(elem) {
+		$(elem).bind('click', function() {
+			$('#tweetkeys').find('input[type=checkbox]').prop('checked',true);
 		});
 	};
-	checkboxLogic('#tweetkeys');
-	// var checkAll = function(elem) {
-		// $(elem).bind('click', function() {
-			// $('#tweetkeys').find('input[type=checkbox]').prop('checked',true).attr('checked',true);
-		// });
-	// };
-	// checkAll('[data-onclick=all]');
+	var uncheckAll = function(elem) {
+		$(elem).bind('click', function() {
+			$('#tweetkeys').find('input[type=checkbox]').prop('checked',false);
+		});
+	};
+	checkAll('[data-onclick=checkAll]');
+	uncheckAll('[data-onclick=uncheckAll]');
 	
 	//Get tweets by taking raw copy/pasted obj input and getting the array of objs inside
 	var getTweetsArray = function (textarea) {
