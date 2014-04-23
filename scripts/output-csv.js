@@ -1,10 +1,12 @@
 // *********
 // ** Takes an array of SIMPLE json objects and returns a CSV.
 // ** Objects must NOT have any nested keys
-// ** Objects must all have the same keys too (with empty values if needed); if not, use json-level
+// ** Objects must all have the same keys too (with empty values if needed), in the SAME ORDER; if not, use json-level module
 // ** Fetch CSV headers from first object (again, because we're assuming all objs have same keys)
 
 var objArray = require('../scripts/simplify-tweets.js');//function
+var levelOut = require('../scripts/json-level.js');//function
+objArray = levelOut(objArray);//adds props with empty vals so all objs have same props (ie. link 2, link 3, etc.). This is for easier CSV processing.
 
 module.exports = function(objArray){
 	//Create array of desired properties using largest object in array

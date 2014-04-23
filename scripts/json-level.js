@@ -49,11 +49,17 @@ module.exports = function(objArray){
 		    props.push(key);   
 		  }
 		  // find differences between obj's props and needed props
-		  var diff = $(neededProps).not(props).get();//array
-		  //loop through diff array and add each index as key with empty string value to obj
-		  for (var j=0;j<diff.length;j++) {
-		     objArray[i][diff[j]] = '';
-		  }
+		  console.log(neededProps);
+		  
+		  //Loop through each key in needed props
+		  
+		  	// if
+		  
+		  // var diff = $(neededProps).not(props).get();//array
+		  // //loop through diff array and add each index as key with empty string value to obj
+		  // for (var j=0;j<diff.length;j++) {
+		     // objArray[i][diff[j]] = '';
+		  // }
 		  //then push leveled object to new array
 		  leveledObjs.push(objArray[i]);
 	}
