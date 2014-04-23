@@ -241,7 +241,7 @@ module.exports = function(rawArray, keysArray){
 				//catch all tweet properties that need special processing
 				// *** Date/Time
 				case 'timestamp':
-					newObj['Unix timestamp'] = tweet.timestamp;
+					newObj['Unix timestamp'] = unixTime;
 					newObj['ISO timestamp'] = dateObj;
 					//switch cases for date/time options
 						// case 'timestamp-iso':
