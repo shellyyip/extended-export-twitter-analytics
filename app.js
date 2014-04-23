@@ -225,18 +225,17 @@ module.exports = function(rawArray, keysArray){
 			}
 		return '';
 	};
-	
-	//Save copy of raw array for special cases
-	//var originArray = $.extend(true, [], rawArray);	
-	//Get filtered tweet array
-	//var tweetsArray = rawArray;
+
 	var output = [];
 	//loop through tweets and remap
 	for (var i=0; i < rawArray.length; i++) {
 		var newObj = {};
 		var tweet = rawArray[i];
+		//Store some super-reused props
 		var unixTime = tweet.timestamp;
-		var dateObj = new Date(unixTime);	
+		var dateObj = new Date(unixTime);
+		var sponsoredInfo = tweet.sponsored_info;	
+		// Twitter Simplification
 		for (var key in keysArray) {
 			switch(keysArray[key]) {
 				//catch all tweet properties that need special processing
@@ -264,15 +263,47 @@ module.exports = function(rawArray, keysArray){
 				case 'replies':
 					newObj['replies'] = tweet.stats.replies;
 					break;
+				// *** The Badges group
+				case 'reach':
+					var reach = tweet.badges.reach;
+					if (reach != undefined) {
+						newObj['reach multiplier'] = reach;
+					} else {
+						newObj['reach multiplier'] = '';
+					}
+					break;
+				// *** Sponsorship Info
+				case 'sponsored_info': 
+					if (sponsoredInfo == null) {
+						newObj['sponsored start'] = '';
+						newObj['sponsored end'] = '';
+					} else {
+						newObj['sponsored start'] = sponsoredInfo.start;
+						newObj['sponsored end'] = sponsoredInfo.end;
+					}
+					break;
+				// case 'campaigns': 
+					// if (sponsoredInfo == null || sponsoredInfo == undefined ) {
+						// newObj['campaign'] = '';
+					// else {
+						// newObj['campaign'] = 'hazspons';
+					// }
+					// break;
 				// *** The Entities group
 				case 'links':
 					var j = 1;
 					var rawEntities = tweet.entities;
 					for (linkKey in tweet.links) {
 						//linkKey is minified twitter URL
-						newObj['link '+j] = findFullUrl(linkKey, rawEntities);			
+						newObj['link_'+j] = findFullUrl(linkKey, rawEntities);			
 						newObj['click count '+j] = tweet.links[linkKey];
 						j++
+					}
+					break;
+				case 'hashtags': 
+					var hashtagsArray = tweet.entities.hashtags;
+					for (var h=0;h<hashtagsArray.length;h++) {
+						newObj['hashtag '+(h+1)] = hashtagsArray[h].text;
 					}
 					break;
 				default:
@@ -284,7 +315,7 @@ module.exports = function(rawArray, keysArray){
 		output.push(newObj);
 	}
 	// * Need to replace undefined with empty strings
-	output = levelOut(output);//adds props with empty vals so all objs have same props (ie. link 2, link 3, etc.). This is for easier CSV processing.
+	output = levelOut(output);//For looping keys such as link 1, link 2, etc., not all tweet objs will have these properties. levelOut adds these props with empty string value so CSV processing will be happier. * This does not cover those properties that are there but set to undefined; set that in the switch above.
 
 	return output;
 };
