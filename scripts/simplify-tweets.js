@@ -83,14 +83,29 @@ module.exports = function(rawArray, keysArray){
 						newObj['sponsored end'] = sponsoredInfo.end;
 					}
 					break;
-				// case 'campaigns': 
-					// if (sponsoredInfo == null || sponsoredInfo == undefined ) {
-						// newObj['campaign'] = '';
-					// else {
-						// newObj['campaign'] = 'hazspons';
-					// }
-					// break;
+				case 'campaigns': 
+					if (sponsoredInfo != null) {
+						var campaignArray = sponsoredInfo.campaigns;
+						var campaignValue = '';
+						for (var c=0;c<campaignArray.length;c++) {
+							campaignValue = campaignValue+campaignArray[c].name+', ';
+						}
+						//lop off last space and comma
+						campaignValue = campaignValue.substring(0, campaignValue.length - 2);
+						newObj['campaigns'] = campaignValue;
+					}
+					break;
 				// *** The Entities group
+				case 'mentions': 
+					var mentionsArray = tweet.entities.mentions;
+					var mentionsValue = '';
+					for (var m=0;m<mentionsArray.length;m++) {
+						mentionsValue = mentionsValue + mentionsArray[m].screen_name+', ';
+					}
+					//lop off last space and comma
+					mentionsValue = mentionsValue.substring(0, mentionsValue.length - 2);
+					newObj['mentions'] = mentionsValue;
+					break;
 				case 'links':
 					var j = 1;
 					var rawEntities = tweet.entities;
@@ -103,9 +118,13 @@ module.exports = function(rawArray, keysArray){
 					break;
 				case 'hashtags': 
 					var hashtagsArray = tweet.entities.hashtags;
+					var hashtagsValue = '';
 					for (var h=0;h<hashtagsArray.length;h++) {
-						newObj['hashtag '+(h+1)] = hashtagsArray[h].text;
+						hashtagsValue = hashtagsValue + hashtagsArray[h].text+', ';
 					}
+					//lop off last space and comma
+					hashtagsValue = hashtagsValue.substring(0, hashtagsValue.length - 2);
+					newObj['hashtags'] = hashtagsValue;
 					break;
 				default:
 					//regular remap;
