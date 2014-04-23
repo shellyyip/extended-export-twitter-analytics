@@ -6,7 +6,7 @@ var filter = require('../scripts/filter.js');
 // Note to self: convert timestamp to datetime via new Date(timestamp);
 module.exports = function(rawArray, keysArray){
 	
-	var findDisplayUrl = function (rawURL, entitiesObj) {
+	var findFullUrl = function (rawURL, entitiesObj) {
 	//this function DOES NOT assume that the rawURL is a media or URL object!
 		var urlsArray = entitiesObj.urls;
 		var mediaArray = entitiesObj.media;
@@ -15,13 +15,13 @@ module.exports = function(rawArray, keysArray){
 		//search urls array
 		for (var i=0; i < urlsLength; i++) {
 		  if (urlsArray[i].url == rawURL) {
-		  	return urlsArray[i].display;
+		  	return urlsArray[i].expanded;
 		  }
 		}		
 			//search media array
 			for (var j=0; j < mediaLength; j++) {
 			  if (mediaArray[j].url == rawURL) {
-			  	return mediaArray[j].display_url;
+			  	return mediaArray[j].expanded_url;
 			  }
 			}
 		return '';
@@ -44,7 +44,7 @@ module.exports = function(rawArray, keysArray){
 					var rawEntities = originArray[i].entities;
 					for (linkKey in tweet.links) {
 						//linkKey is minified twitter URL
-						newObj['link '+j] = findDisplayUrl(linkKey, rawEntities);			
+						newObj['link '+j] = findFullUrl(linkKey, rawEntities);			
 						newObj['click count '+j] = tweet.links[linkKey];
 						j++
 					}

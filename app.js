@@ -125,14 +125,34 @@ $(document).ready(function() {
 // *********
 // ** Takes an array of SIMPLE json objects and returns a CSV.
 // ** Objects must NOT have any nested keys
-// ** This function also assumes that every object has the same keys, even if their value is empty.
+// ** To get CSV headers, search for the object with the most keys, and extract its keys for headers
 
 var objArray = require('../scripts/simplify-tweets.js');//function
 
 module.exports = function(objArray){
-	//Create array of desired properties using first object in array
+	//Create array of desired properties using largest object in array
 	var properties = [];
-	for (key in objArray[0]) {
+	//Find object in array with most keys
+	var findBiggestObjIndex = function(objArray) {
+		var biggestIndex;
+	    var leader = 0;
+			for (var i=0;i<objArray.length;i++) {
+				//count keys in current object
+	       var newCount = 0;
+				for(key in objArray[i]) {
+				  if(objArray[i].hasOwnProperty(key)) {//if a key exists
+				    newCount++;
+				  }
+				}	
+	      if (newCount > leader) {
+	        biggestIndex = i;
+	        leader = newCount;
+	      }
+	    }
+	    return biggestIndex;    
+	};
+	
+	for (key in objArray[findBiggestObjIndex(objArray)]) {
 		properties.push(key);
 	}
 	// // //process text for CSV output
@@ -141,6 +161,13 @@ module.exports = function(objArray){
 	// // //convert time
 	// // var time = new Date(tweets[i].timestamp);
 	// // // text = text.replace(/,/g,'","');
+	
+var escapify = function(string) {
+	string = string.replace(/"/g,'""');
+	//string = string.replace(/,/g,'","');
+	string = '"' + string + '"';
+	return string;
+};
 
 //Prep content for CSV export. *** FOR TEXT, must put quotes around to prevent CSV from delimiting at "real" commas!
 var headers = '';
@@ -152,11 +179,9 @@ for (var i=0; i < objArray.length; i++) {
 	var newRow = '';
 	for (var key in objArray[i]) {
 		var value = objArray[i][key];
-		if (typeof value == 'string') {
-			value = value.replace(/"/g,'""');
+		if (typeof value == 'string') {			
+			value = escapify(value);
 		}
-		
-		
 		newRow = newRow + value + ',';
 	}
 	//Lop off last comma & replace with newline
@@ -181,7 +206,7 @@ var filter = require('../scripts/filter.js');
 // Note to self: convert timestamp to datetime via new Date(timestamp);
 module.exports = function(rawArray, keysArray){
 	
-	var findDisplayUrl = function (rawURL, entitiesObj) {
+	var findFullUrl = function (rawURL, entitiesObj) {
 	//this function DOES NOT assume that the rawURL is a media or URL object!
 		var urlsArray = entitiesObj.urls;
 		var mediaArray = entitiesObj.media;
@@ -190,13 +215,13 @@ module.exports = function(rawArray, keysArray){
 		//search urls array
 		for (var i=0; i < urlsLength; i++) {
 		  if (urlsArray[i].url == rawURL) {
-		  	return urlsArray[i].display;
+		  	return urlsArray[i].expanded;
 		  }
 		}		
 			//search media array
 			for (var j=0; j < mediaLength; j++) {
 			  if (mediaArray[j].url == rawURL) {
-			  	return mediaArray[j].display_url;
+			  	return mediaArray[j].expanded_url;
 			  }
 			}
 		return '';
@@ -219,7 +244,7 @@ module.exports = function(rawArray, keysArray){
 					var rawEntities = originArray[i].entities;
 					for (linkKey in tweet.links) {
 						//linkKey is minified twitter URL
-						newObj['link '+j] = findDisplayUrl(linkKey, rawEntities);			
+						newObj['link '+j] = findFullUrl(linkKey, rawEntities);			
 						newObj['click count '+j] = tweet.links[linkKey];
 						j++
 					}
