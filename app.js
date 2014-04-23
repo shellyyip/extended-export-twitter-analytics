@@ -53,24 +53,6 @@ module.exports = function(elem,attr){
 // * This assumes all objects in array are SIMPLIFIED; ie. NOT NESTED, no objects for values.
 // * Outputs an array of objects.
 module.exports = function(objArray){
-	// var findBiggestObjIndex = function(objArray) {
-		// var biggestIndex;
-	    // var leader = 0;
-			// for (var i=0;i<objArray.length;i++) {
-				// //count keys in current object
-	       // var newCount = 0;
-				// for(key in objArray[i]) {
-				  // if(objArray[i].hasOwnProperty(key)) {//if a key exists
-				    // newCount++;
-				  // }
-				// }	
-	      // if (newCount > leader) {
-	        // biggestIndex = i;
-	        // leader = newCount;
-	      // }
-	    // }
-	    // return biggestIndex;    
-	// };
 	var collectProps = function(objArray) {
 	  var props = [];
 	  // loop through each obj in array
@@ -89,36 +71,32 @@ module.exports = function(objArray){
 	};
 	
 	var neededProps = collectProps(objArray);
+	console.log(neededProps);
 	var leveledObjs = [];
-	// Loop through each obj in array AGAIN
+	// Loop through each obj in array AGAIN	
 	for (var i=0;i<objArray.length;i++) {
-		  // // get props for each object
-		  // var props = [];
-		  // for (key in objArray[i]) {
-		    // props.push(key);   
-		  // }
-		  // find differences between obj's props and needed props
 		  //Loop through each key in needed props
 		  for (var j=0;j<neededProps.length;j++) {
-		  	console.log(neededProps[j]);
-		  	console.log(objArray[i].hasOwnProperty(neededProps[j]));
-		  		if (objArray[i].hasOwnProperty(neededProps[j]) == false) {//if neededKey in object
+		  		//if neededKey in not object
+		  		if (objArray[i].hasOwnProperty(neededProps[j]) == false) {
 		  			//add the neededProp with empty string value
 		  			objArray[i][neededProps[j]] = '';
 		  		}
 		  }
-		  
-		  // var diff = $(neededProps).not(props).get();//array
-		  // //loop through diff array and add each index as key with empty string value to obj
-		  // for (var j=0;j<diff.length;j++) {
-		     // objArray[i][diff[j]] = '';
-		  // }
 		  //then push leveled object to new array
 		  leveledObjs.push(objArray[i]);
 	}
 	return leveledObjs;
-	};
+};
 },{}],4:[function(require,module,exports){
+// ***********
+// Module: json-order
+// * Orders the properties in a JSON object to a desired order.
+// * Takes an object and an array of properties in desired order.
+module.exports = function(object,orderArray){
+	
+}
+},{}],5:[function(require,module,exports){
 (function (global){
 (function browserifyShim(module, exports, define, browserify_shim__define__module__export__) {
 /*! jQuery v2.1.0 | (c) 2005, 2014 jQuery Foundation, Inc. | jquery.org/license */
@@ -130,7 +108,7 @@ return d||(f=$b[b],$b[b]=e,e=null!=c(a,b,d)?b.toLowerCase():null,$b[b]=f),e}});v
 }).call(global, undefined, undefined, undefined, function defineExport(ex) { module.exports = ex; });
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 var $ = require('jquery');
 var getKeys = require('../scripts/getcheckboxes.js');
 var simplifyTweets = require('../scripts/simplify-tweets.js');
@@ -193,7 +171,7 @@ $(document).ready(function() {
 		$('.csv-display').html('');//clear previous content
 	});
 });
-},{"../scripts/getcheckboxes.js":2,"../scripts/output-csv.js":6,"../scripts/simplify-tweets.js":7,"jquery":4}],6:[function(require,module,exports){
+},{"../scripts/getcheckboxes.js":2,"../scripts/output-csv.js":7,"../scripts/simplify-tweets.js":8,"jquery":5}],7:[function(require,module,exports){
 // *********
 // ** Takes an array of SIMPLE json objects and returns a CSV.
 // ** Objects must NOT have any nested keys
@@ -201,14 +179,15 @@ $(document).ready(function() {
 // ** Fetch CSV headers from first object (again, because we're assuming all objs have same keys)
 
 var objArray = require('../scripts/simplify-tweets.js');//function
+var levelOut = require('../scripts/json-level.js');
+var order = require('../scripts/json-order.js');
 
 module.exports = function(objArray){
 	//Create array of desired properties using largest object in array
 	var properties = [];
 	for (key in objArray[0]) {
 		properties.push(key);
-	}
-	
+	}	
 var escapify = function(string) {
 	string = string.replace(/"/g,'""');
 	string = '"' + string + '"';
@@ -246,7 +225,7 @@ headers = headers.substring(0, headers.length - 1);
 var csv = headers+'\r\n'+rows;
 return csv;
 };
-},{"../scripts/simplify-tweets.js":7}],7:[function(require,module,exports){
+},{"../scripts/json-level.js":3,"../scripts/json-order.js":4,"../scripts/simplify-tweets.js":8}],8:[function(require,module,exports){
 var filter = require('../scripts/filter.js');
 var levelOut = require('../scripts/json-level.js');
 // **** SIMPLIFY-TWEETS.JS
@@ -326,4 +305,4 @@ module.exports = function(rawArray, keysArray){
 	output = levelOut(output);//adds props with empty vals so all objs have same props (ie. link 2, link 3, etc.). This is for easier CSV processing.
 	return output;
 };
-},{"../scripts/filter.js":1,"../scripts/json-level.js":3}]},{},[5]);
+},{"../scripts/filter.js":1,"../scripts/json-level.js":3}]},{},[6]);
