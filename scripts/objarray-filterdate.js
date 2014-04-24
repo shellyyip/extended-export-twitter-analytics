@@ -10,7 +10,7 @@ module.exports = function(objArray, range, property){
 		endTimestamp = endDate.getTime();//unix timestamp
 		switch(range[0]) {
 			case('30 Days'):
-				startTimestamp = endTimestamp - 2592000000;//30 days
+				startTimestamp = endTimestamp - 2592000000;
 				break;
 			case('60 Days'):
 				startTimestamp = endTimestamp - 5184000000;
@@ -27,9 +27,6 @@ module.exports = function(objArray, range, property){
 	// }
 	for (var i=0;i<objArray.length;i++) {
 		var objTimestamp = objArray[i][property];
-		// console.log('OBJ: '+objTimestamp);
-		// console.log('START: '+startTimestamp);
-		// console.log('END: '+endTimestamp);
 		if ( startTimestamp < objTimestamp && objTimestamp < endTimestamp ) {
 			output.push(objArray[i]);
 		}

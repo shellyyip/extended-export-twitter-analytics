@@ -148,7 +148,7 @@ module.exports = function(objArray, range, property){
 		endTimestamp = endDate.getTime();//unix timestamp
 		switch(range[0]) {
 			case('30 Days'):
-				startTimestamp = endTimestamp - 2592000000;//30 days
+				startTimestamp = endTimestamp - 2592000000;
 				break;
 			case('60 Days'):
 				startTimestamp = endTimestamp - 5184000000;
@@ -165,9 +165,6 @@ module.exports = function(objArray, range, property){
 	// }
 	for (var i=0;i<objArray.length;i++) {
 		var objTimestamp = objArray[i][property];
-		// console.log('OBJ: '+objTimestamp);
-		// console.log('START: '+startTimestamp);
-		// console.log('END: '+endTimestamp);
 		if ( startTimestamp < objTimestamp && objTimestamp < endTimestamp ) {
 			output.push(objArray[i]);
 		}
@@ -310,7 +307,7 @@ module.exports = function(rawArray, keysArray){
 		var unixTime = tweet.timestamp;
 		var dateObj = new Date(unixTime);
 		var year = dateObj.getFullYear();
-		var month = dateObj.getMonth();
+		var month = (dateObj.getMonth() + 1);//Need to add 1 b/c JS Date month starts from 0 (so January = 0, Dec = 11). WHY.
 		var day = dateObj.getDate();
 		
 		//** Other props

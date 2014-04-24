@@ -38,7 +38,7 @@ module.exports = function(rawArray, keysArray){
 		var unixTime = tweet.timestamp;
 		var dateObj = new Date(unixTime);
 		var year = dateObj.getFullYear();
-		var month = dateObj.getMonth();
+		var month = (dateObj.getMonth() + 1);//Need to add 1 b/c JS Date month starts from 0 (so January = 0, Dec = 11). WHY.
 		var day = dateObj.getDate();
 		
 		//** Other props
