@@ -27,7 +27,4 @@ module.exports = function(objArray,elem){
 	elem.html('<table>'
 				+headers+rows+
 			  '</table>');
-	console.log('<table>'
-				+headers+rows+
-			  '</table>');
 };
