@@ -33,8 +33,8 @@ $(document).ready(function() {
 	var generate = function () {	
 		var keys = getKeys('#tweetkeys','data-prop');
 		var dateRange = getKeys('#daterange','data-daterange');
-		var tweets = getTweetsArray('.json-input');
-		tweets = filterDateRange(tweets,dateRange,timestamp);
+		var tweets = filterDateRange(getTweetsArray('.json-input'),dateRange,'timestamp');
+		//console.log(tweets);
 		var simpTweets = simplifyTweets(tweets, keys);
 		var csv = outputCSV(simpTweets);
 		//Output data onto screen

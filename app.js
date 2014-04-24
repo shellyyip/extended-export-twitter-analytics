@@ -117,8 +117,8 @@ $(document).ready(function() {
 	var generate = function () {	
 		var keys = getKeys('#tweetkeys','data-prop');
 		var dateRange = getKeys('#daterange','data-daterange');
-		var tweets = getTweetsArray('.json-input');
-		tweets = filterDateRange(tweets,dateRange,timestamp);
+		var tweets = filterDateRange(getTweetsArray('.json-input'),dateRange,'timestamp');
+		//console.log(tweets);
 		var simpTweets = simplifyTweets(tweets, keys);
 		var csv = outputCSV(simpTweets);
 		//Output data onto screen
@@ -137,24 +137,42 @@ $(document).ready(function() {
 });
 },{"../scripts/getcheckboxes.js":1,"../scripts/lib/jquery-2.1.0.min.js":4,"../scripts/objarray-filterdate.js":6,"../scripts/output-csv.js":7,"../scripts/output-htmltable.js":8,"../scripts/simplify-tweets.js":9}],6:[function(require,module,exports){
 //Takes an array of objects, a date range (string or array), and an object property that has a Unix timestamp in it
-module.exports = function(objArray, range, unixTimeProp){
+module.exports = function(objArray, range, property){
+	var output = [];
 	var startTimestamp;
 	var endTimestamp;
-	if (typeof range == 'string') {
-		endTimestamp = new Date();
-		switch(range) {
-			case('30 days'):
+	
+	//if (range.length == 1) {//if range array is only one value
+		var now = new Date();
+		var endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());//today at beginning of day (00:00:00 or midnight)
+		endTimestamp = endDate.getTime();//unix timestamp
+		switch(range[0]) {
+			case('30 Days'):
+				startTimestamp = endTimestamp - 2592000000;//30 days
 				break;
+			case('60 Days'):
+				startTimestamp = endTimestamp - 5184000000;
+				break;
+			case('90 Days'):
+				startTimestamp = endTimestamp - 7776000000;
+				break;
+			default:
+				//if all, just break and return original obj array
+				return objArray;
 		};
-	}
+	//}
 	// if (typeof range == 'array') {
 	// }
 	for (var i=0;i<objArray.length;i++) {
-		while (objArray[i].timestamp > startTimestamp ) {
-			
+		var objTimestamp = objArray[i][property];
+		// console.log('OBJ: '+objTimestamp);
+		// console.log('START: '+startTimestamp);
+		// console.log('END: '+endTimestamp);
+		if ( startTimestamp < objTimestamp && objTimestamp < endTimestamp ) {
+			output.push(objArray[i]);
 		}
 	}
-	return objArray;
+	return output;
 };
 },{}],7:[function(require,module,exports){
 // *********
