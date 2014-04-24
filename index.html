@@ -24,9 +24,9 @@
 				<textarea rows="8" cols="100" class="json-input"  placeholder='{"statuses":[{...'></textarea>	
 			</li>
 			<li>
-				<p>Select a date range:</p>
+				<p>Select a date range:  <span class="helptext">Optional. Blank defaults to All</span></p>
 				<ul id="daterange">
-					<li><input type="radio" name="range" data-daterange="all">All</li>
+					<li><input type="radio" name="range">All</li>
 					<li><input type="radio" name="range" data-daterange="30 Days">30 Days</li>
 					<li><input type="radio" name="range" data-daterange="60 Days">60 Days</li>
 					<li><input type="radio" name="range" data-daterange="90 Days">90 Days</li>
@@ -44,13 +44,16 @@
 				<div id="tweetkeys">
 					<!-- data-prop = must match a tweet obj property. data-option is for other user options. -->
 					<h3>Date & Time</h3>
-					<ul>
+					<ul id="datetime-formats">
 						<li>
-							<input type="checkbox" name="Date & Time" data-prop="timestamp">Unix Timestamp <span class="helptext"><a href="http://en.wikipedia.org/wiki/Unix_time">(What's Unix time?)</a></span>
+							<input type="checkbox" name="Unix Timestamp" data-prop="timestamp" data-option="unix-timestamp">Unix Timestamp <span class="helptext"><a href="http://en.wikipedia.org/wiki/Unix_time">(What's Unix time?)</a></span>
 						</li>
-						<!-- <li>
-							<input type="checkbox" name="Full ISO Date" data-option="timestamp-iso">Full ISO Date <span class="helptext"></a></span>
-						</li> -->
+						<li>
+							<input type="checkbox" name="ISO Timestamp" data-prop="timestamp" data-option="iso-timestamp">ISO Timestamp <span class="helptext">Format: 2014-04-22T17:55:05.000Z <a href="http://en.wikipedia.org/wiki/ISO_8601">(What's ISO time?)</a></span>
+						</li>
+						<li>
+							<input type="checkbox" name="ISO Date" data-prop="timestamp" data-option="iso-date">ISO Date <span class="helptext">Format: 2014-04-22</span>
+						</li>
 					</ul>
 					<h3>Basic Info</h3>
 					<ul>
@@ -77,7 +80,7 @@
 							<input type="checkbox" name="Replies" data-prop="replies">Replies
 						</li>
 						<li>
-							<input type="checkbox" name="Reach" data-prop="reach">Reach <span class="helptext">Expressed as a multiplier (i.e. 2x normal reach)</span>
+							<input type="checkbox" name="Reach" data-prop="reach">Reach <span class="helptext">Value is a multiplier (i.e. 2.99 x normal reach)</span>
 						</li>
 					</ul>
 					

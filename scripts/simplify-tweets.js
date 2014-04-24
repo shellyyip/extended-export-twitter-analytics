@@ -1,4 +1,5 @@
 var levelOut = require('../scripts/json-level.js');
+var getOptions = require('../scripts/getcheckboxes.js');
 // **** SIMPLIFY-TWEETS.JS
 // * Filters raw tweet array to desired keys, then returns a simplified, remapped array of tweets using friendly names
 // INPUT: array of standard tweet objects (formatted like their API), array of obj of desired properties, optimally mapped as prop:friendlyName
@@ -31,27 +32,37 @@ module.exports = function(rawArray, keysArray){
 	for (var i=0; i < rawArray.length; i++) {
 		var newObj = {};
 		var tweet = rawArray[i];
-		//Store some super-reused props
+		// Twitter Simplification
+		//** Special separate Date/Time Processing
+		var dateOptions = getOptions('#datetime-formats','data-option');
 		var unixTime = tweet.timestamp;
 		var dateObj = new Date(unixTime);
-		var sponsoredInfo = tweet.sponsored_info;	
-		// Twitter Simplification
+		var year = dateObj.getFullYear();
+		var month = dateObj.getMonth();
+		var day = dateObj.getDate();
+		
+		//** Other props
+		var sponsoredInfo = tweet.sponsored_info;		
 		for (var key in keysArray) {
-			switch(keysArray[key]) {
-				//catch all tweet properties that need special processing
-				// *** Date/Time
+			switch(keysArray[key]) {//catch all tweet properties that need special processing			
 				case 'timestamp':
-					newObj['Unix timestamp'] = unixTime;
-					newObj['ISO timestamp'] = dateObj;
-					//switch cases for date/time options
-						// case 'timestamp-iso':
-						// newObj['ISO timestamp'] = dateObj;
-						// // var year = dateObj.getFullYear();
-						// // var month = dateObj.getMonth();
-						// // var day = dateObj.getDate();
-						// // newObj['date'] = year + '-' + month + '-' + day;
-						// //newObj['time'] = 05:26:10;
-						// break;
+					for (index in dateOptions) {
+						switch(dateOptions[index]) {
+							case 'unix-timestamp':
+								newObj['UNIX timestamp'] = unixTime;
+								break;
+							case 'iso-timestamp':
+								newObj['ISO timestamp'] = dateObj;
+								break;
+							case 'iso-date':
+								newObj['ISO Date'] = year + '-' + month + '-' + day;
+								break;
+							case 'MM/DD/YYYY':
+								newObj['Date'] = month+'/'+day+'/'+year;
+								break;
+								
+						}
+					}
 					break;
 				// *** The Stats group
 				case 'retweets':
@@ -134,7 +145,7 @@ module.exports = function(rawArray, keysArray){
 		output.push(newObj);
 	}
 	// * Need to replace undefined with empty strings
-	output = levelOut(output);//For looping keys such as link 1, link 2, etc., not all tweet objs will have these properties. levelOut adds these props with empty string value so CSV processing will be happier. * This does not cover those properties that are there but set to undefined; set that in the switch above.
+	output = levelOut(output);//For looping keys such as link 1, link 2, etc., not all tweet objs will have these properties. levelOut adds these props with empty string value so CSV processing will be happier.
 
 	return output;
 };
