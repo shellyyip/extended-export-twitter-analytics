@@ -134,6 +134,15 @@ $(document).ready(function() {
 	$('.generate-button').bind('click', function() {
 		generate();	
 	});
+	
+	//Copy to clipboard button
+	// var copyToClipboard = function (s) {
+	    // if (window.clipboardData && clipboardData.setData) {
+	        // clipboardData.setData('text', s);
+	    // }
+	// };
+	// onclick="copyToClipboard(document.getElementByClass('output-display').innerHTML
+	
 });
 },{"../scripts/getcheckboxes.js":1,"../scripts/lib/jquery-2.1.0.min.js":4,"../scripts/objarray-filterdate.js":6,"../scripts/output-csv.js":7,"../scripts/output-htmltable.js":8,"../scripts/simplify-tweets.js":9}],6:[function(require,module,exports){
 //Takes an array of objects, a date range (string or array), and an object property that has a Unix timestamp in it
@@ -231,7 +240,7 @@ module.exports = function(objArray,elem){
 	for (key in objArray[0]) {
 		properties.push(key);
 	}
-	var headers;
+	var headers = '';
 	for (var i=0; i < properties.length; i++){
 	  headers = headers+'<td>'+properties[i]+'</td>';
 	}
@@ -252,20 +261,10 @@ module.exports = function(objArray,elem){
 	elem.html('<table>'
 				+headers+rows+
 			  '</table>');
+	console.log('<table>'
+				+headers+rows+
+			  '</table>');
 };
-
-// <table style="width:300px">
-// <tr>
-  // <td>Jill</td>
-  // <td>Smith</td> 
-  // <td>50</td>
-// </tr>
-// <tr>
-  // <td>Eve</td>
-  // <td>Jackson</td> 
-  // <td>94</td>
-// </tr>
-// </table>
 },{}],9:[function(require,module,exports){
 var levelOut = require('../scripts/json-level.js');
 var getOptions = require('../scripts/getcheckboxes.js');
@@ -309,7 +308,6 @@ module.exports = function(rawArray, keysArray){
 		var year = dateObj.getFullYear();
 		var month = (dateObj.getMonth() + 1);//Need to add 1 b/c JS Date month starts from 0 (so January = 0, Dec = 11). WHY.
 		var day = dateObj.getDate();
-		
 		//** Other props
 		var sponsoredInfo = tweet.sponsored_info;		
 		for (var key in keysArray) {
@@ -327,7 +325,7 @@ module.exports = function(rawArray, keysArray){
 								newObj['ISO Date'] = year + '-' + month + '-' + day;
 								break;
 							case 'MM/DD/YYYY':
-								newObj['Date'] = month+'/'+day+'/'+year;
+								newObj['date'] = month+'/'+day+'/'+year;
 								break;
 								
 						}

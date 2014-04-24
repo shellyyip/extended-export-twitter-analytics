@@ -50,4 +50,13 @@ $(document).ready(function() {
 	$('.generate-button').bind('click', function() {
 		generate();	
 	});
+	
+	//Copy to clipboard button
+	// var copyToClipboard = function (s) {
+	    // if (window.clipboardData && clipboardData.setData) {
+	        // clipboardData.setData('text', s);
+	    // }
+	// };
+	// onclick="copyToClipboard(document.getElementByClass('output-display').innerHTML
+	
 });
