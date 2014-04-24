@@ -27,4 +27,10 @@ module.exports = function(objArray,elem){
 	elem.html('<table>'
 				+headers+rows+
 			  '</table>');
+<<<<<<< HEAD
+=======
+	console.log('<table>'
+				+headers+rows+
+			  '</table>');
+>>>>>>> d46041be9eb0810acee74556905f4250035bde43
 };
