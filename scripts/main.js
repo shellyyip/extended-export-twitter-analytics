@@ -3,6 +3,7 @@ var getKeys = require('../scripts/getcheckboxes.js');//gather array of checked c
 var simplifyTweets = require('../scripts/simplify-tweets.js');
 var outputCSV = require('../scripts/output-csv.js');//allows download csv button to work. Button must have class download-csv
 var outputHTMLTable = require('../scripts/output-htmltable.js');
+var filterDateRange = require('../scripts/objarray-filterdate.js');
 // MAIN.JS
 //https://ads.twitter.com/accounts/xxxxxx/timeline_activity/tweet_data
 $(document).ready(function() {
@@ -31,7 +32,9 @@ $(document).ready(function() {
 	//Generate new filtered array of objs and print them out on screen
 	var generate = function () {	
 		var keys = getKeys('#tweetkeys','data-prop');
+		var dateRange = getKeys('#daterange','data-daterange');
 		var tweets = getTweetsArray('.json-input');
+		tweets = filterDateRange(tweets,dateRange,timestamp);
 		var simpTweets = simplifyTweets(tweets, keys);
 		var csv = outputCSV(simpTweets);
 		//Output data onto screen
@@ -47,10 +50,4 @@ $(document).ready(function() {
 	$('.generate-button').bind('click', function() {
 		generate();	
 	});
-	// $('.download-csv').bind('click', function() {
-		// // ** Must regenerate tweet array, for case if the user dropped a key and now wants it back
-		// var simpTweets = simplifyTweets(getTweetsArray('.json-input'),keys);
-		// var csv = outputCSV(tweets);
-		// $('.csv-display').html('');//clear previous content
-	// });
 });

@@ -1,5 +1,6 @@
-// ***** FILTER.JS
-//Filters original array of obejcts into a new curated array of JSON.
+// ***** JSON-FILTER.JS
+//Takes a JSON object and drops any unwanted properties
+// Desired props should be in an array
 //Input & output = array of JSON objs
 module.exports = function(input, properties){
 	var output = [];//array of objects	

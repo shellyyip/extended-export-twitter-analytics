@@ -5,7 +5,6 @@ var levelOut = require('../scripts/json-level.js');
 // OUTPUT: totally simplified tweet objects in array, formatted as friendlyName: propValue
 // Note to self: convert timestamp to datetime via new Date(timestamp);
 module.exports = function(rawArray, keysArray){
-	
 	var findFullUrl = function (rawURL, entitiesObj) {
 	//this function DOES NOT assume that the rawURL is a media or URL object!
 		var urlsArray = entitiesObj.urls;

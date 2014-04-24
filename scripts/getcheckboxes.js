@@ -4,7 +4,7 @@
 module.exports = function(elem,attr){
 	var output = [];
 	//only get checkboxes with requested attribute that have property checked = true
-	var checkboxes = $(elem).find('input[type=checkbox]['+attr+']');	
+	var checkboxes = $(elem).find('input['+attr+']');	
 	checkboxes.each(function() {
 		if (this.checked == true) {
 			var item = $(this).attr(attr);//get value of desired attribute

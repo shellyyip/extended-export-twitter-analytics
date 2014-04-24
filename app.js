@@ -5,7 +5,7 @@
 module.exports = function(elem,attr){
 	var output = [];
 	//only get checkboxes with requested attribute that have property checked = true
-	var checkboxes = $(elem).find('input[type=checkbox]['+attr+']');	
+	var checkboxes = $(elem).find('input['+attr+']');	
 	checkboxes.each(function() {
 		if (this.checked == true) {
 			var item = $(this).attr(attr);//get value of desired attribute
@@ -87,6 +87,7 @@ var getKeys = require('../scripts/getcheckboxes.js');//gather array of checked c
 var simplifyTweets = require('../scripts/simplify-tweets.js');
 var outputCSV = require('../scripts/output-csv.js');//allows download csv button to work. Button must have class download-csv
 var outputHTMLTable = require('../scripts/output-htmltable.js');
+var filterDateRange = require('../scripts/objarray-filterdate.js');
 // MAIN.JS
 //https://ads.twitter.com/accounts/xxxxxx/timeline_activity/tweet_data
 $(document).ready(function() {
@@ -115,7 +116,9 @@ $(document).ready(function() {
 	//Generate new filtered array of objs and print them out on screen
 	var generate = function () {	
 		var keys = getKeys('#tweetkeys','data-prop');
+		var dateRange = getKeys('#daterange','data-daterange');
 		var tweets = getTweetsArray('.json-input');
+		tweets = filterDateRange(tweets,dateRange,timestamp);
 		var simpTweets = simplifyTweets(tweets, keys);
 		var csv = outputCSV(simpTweets);
 		//Output data onto screen
@@ -131,14 +134,29 @@ $(document).ready(function() {
 	$('.generate-button').bind('click', function() {
 		generate();	
 	});
-	// $('.download-csv').bind('click', function() {
-		// // ** Must regenerate tweet array, for case if the user dropped a key and now wants it back
-		// var simpTweets = simplifyTweets(getTweetsArray('.json-input'),keys);
-		// var csv = outputCSV(tweets);
-		// $('.csv-display').html('');//clear previous content
-	// });
 });
-},{"../scripts/getcheckboxes.js":1,"../scripts/lib/jquery-2.1.0.min.js":4,"../scripts/output-csv.js":6,"../scripts/output-htmltable.js":7,"../scripts/simplify-tweets.js":8}],6:[function(require,module,exports){
+},{"../scripts/getcheckboxes.js":1,"../scripts/lib/jquery-2.1.0.min.js":4,"../scripts/objarray-filterdate.js":6,"../scripts/output-csv.js":7,"../scripts/output-htmltable.js":8,"../scripts/simplify-tweets.js":9}],6:[function(require,module,exports){
+//Takes an array of objects, a date range (string or array), and an object property that has a Unix timestamp in it
+module.exports = function(objArray, range, unixTimeProp){
+	var startTimestamp;
+	var endTimestamp;
+	if (typeof range == 'string') {
+		endTimestamp = new Date();
+		switch(range) {
+			case('30 days'):
+				break;
+		};
+	}
+	// if (typeof range == 'array') {
+	// }
+	for (var i=0;i<objArray.length;i++) {
+		while (objArray[i].timestamp > startTimestamp ) {
+			
+		}
+	}
+	return objArray;
+};
+},{}],7:[function(require,module,exports){
 // *********
 // ** Takes an array of SIMPLE json objects and returns a CSV.
 // ** Objects must NOT have any nested keys
@@ -189,7 +207,7 @@ headers = headers.substring(0, headers.length - 1);
 var csv = headers+'\r\n'+rows;
 return csv;
 };
-},{"../scripts/simplify-tweets.js":8}],7:[function(require,module,exports){
+},{"../scripts/simplify-tweets.js":9}],8:[function(require,module,exports){
 
 module.exports = function(objArray,elem){
 	elem = $(elem);
@@ -233,7 +251,7 @@ module.exports = function(objArray,elem){
   // <td>94</td>
 // </tr>
 // </table>
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 var levelOut = require('../scripts/json-level.js');
 // **** SIMPLIFY-TWEETS.JS
 // * Filters raw tweet array to desired keys, then returns a simplified, remapped array of tweets using friendly names
@@ -241,7 +259,6 @@ var levelOut = require('../scripts/json-level.js');
 // OUTPUT: totally simplified tweet objects in array, formatted as friendlyName: propValue
 // Note to self: convert timestamp to datetime via new Date(timestamp);
 module.exports = function(rawArray, keysArray){
-	
 	var findFullUrl = function (rawURL, entitiesObj) {
 	//this function DOES NOT assume that the rawURL is a media or URL object!
 		var urlsArray = entitiesObj.urls;

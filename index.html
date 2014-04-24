@@ -24,6 +24,20 @@
 				<textarea rows="8" cols="100" class="json-input"  placeholder='{"statuses":[{...'></textarea>	
 			</li>
 			<li>
+				<p>Select a date range:</p>
+				<ul id="daterange">
+					<li><input type="radio" name="range" data-daterange="all">All</li>
+					<li><input type="radio" name="range" data-daterange="30 Days">30 Days</li>
+					<li><input type="radio" name="range" data-daterange="60 Days">60 Days</li>
+					<li><input type="radio" name="range" data-daterange="90 Days">90 Days</li>
+					<!--li><input type="radio" name="range" value="all">Custom: 
+						<input type="text" placeholder='Start Date'>
+						to
+						<input type="text" placeholder='End Date'>
+						</li-->
+				</ul>	
+			</li>
+			<li>
 				<p>Select the columns you want:</p>
 				<button data-onclick="checkAll">SELECT ALL</button>
 				<button data-onclick="uncheckAll">SELECT NONE</button>
