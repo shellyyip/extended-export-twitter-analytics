@@ -86,6 +86,7 @@ var $ = require('../scripts/lib/jquery-2.1.0.min.js');
 var getKeys = require('../scripts/getcheckboxes.js');//gather array of checked checkboxes
 var simplifyTweets = require('../scripts/simplify-tweets.js');
 var outputCSV = require('../scripts/output-csv.js');//allows download csv button to work. Button must have class download-csv
+var outputHTMLTable = require('../scripts/output-htmltable.js');
 // MAIN.JS
 //https://ads.twitter.com/accounts/xxxxxx/timeline_activity/tweet_data
 $(document).ready(function() {
@@ -114,19 +115,11 @@ $(document).ready(function() {
 	//Generate new filtered array of objs and print them out on screen
 	var generate = function () {	
 		var keys = getKeys('#tweetkeys','data-prop');
-		console.log(keys);
 		var tweets = getTweetsArray('.json-input');
 		var simpTweets = simplifyTweets(tweets, keys);
 		var csv = outputCSV(simpTweets);
 		//Output data onto screen
-		$('.output-display, .csv-display').html('');//clear previous content
-		$('.csv-display').text(csv);
-		$('.output-display').append(
-			'<h1>'+keys+'</h1>'
-		);
-		for (var i=0; i < simpTweets.length; i++) {
-			$('.output-display').append('<p>'+JSON.stringify(simpTweets[i], null, 4)+'</p><hr>');
-		}
+		outputHTMLTable(simpTweets,'.output-display');
 		//Activate CSV download
 		$('.download-csv').attr({
 			href: 'data:application/csv,' + encodeURI(csv),	
@@ -145,7 +138,7 @@ $(document).ready(function() {
 		// $('.csv-display').html('');//clear previous content
 	// });
 });
-},{"../scripts/getcheckboxes.js":1,"../scripts/lib/jquery-2.1.0.min.js":4,"../scripts/output-csv.js":6,"../scripts/simplify-tweets.js":7}],6:[function(require,module,exports){
+},{"../scripts/getcheckboxes.js":1,"../scripts/lib/jquery-2.1.0.min.js":4,"../scripts/output-csv.js":6,"../scripts/output-htmltable.js":7,"../scripts/simplify-tweets.js":8}],6:[function(require,module,exports){
 // *********
 // ** Takes an array of SIMPLE json objects and returns a CSV.
 // ** Objects must NOT have any nested keys
@@ -196,7 +189,51 @@ headers = headers.substring(0, headers.length - 1);
 var csv = headers+'\r\n'+rows;
 return csv;
 };
-},{"../scripts/simplify-tweets.js":7}],7:[function(require,module,exports){
+},{"../scripts/simplify-tweets.js":8}],7:[function(require,module,exports){
+
+module.exports = function(objArray,elem){
+	elem = $(elem);
+	//Make headers
+	var properties = [];
+	for (key in objArray[0]) {
+		properties.push(key);
+	}
+	var headers;
+	for (var i=0; i < properties.length; i++){
+	  headers = headers+'<td>'+properties[i]+'</td>';
+	}
+	headers = '<tr>'+headers+'</tr>';
+	//Rows
+	var rows = '';
+	for (var i=0; i < objArray.length; i++) {
+		var newRow = '';
+		for (var key in objArray[i]) {
+			var value = objArray[i][key];
+			newRow = newRow +'<td>'+ value +'</td>';
+		}
+		newRow = '<tr>'+newRow+'</tr>';
+		//Add the row to rows
+		rows = rows+newRow;
+	}
+	//Put it all together
+	elem.html('<table>'
+				+headers+rows+
+			  '</table>');
+};
+
+// <table style="width:300px">
+// <tr>
+  // <td>Jill</td>
+  // <td>Smith</td> 
+  // <td>50</td>
+// </tr>
+// <tr>
+  // <td>Eve</td>
+  // <td>Jackson</td> 
+  // <td>94</td>
+// </tr>
+// </table>
+},{}],8:[function(require,module,exports){
 var levelOut = require('../scripts/json-level.js');
 // **** SIMPLIFY-TWEETS.JS
 // * Filters raw tweet array to desired keys, then returns a simplified, remapped array of tweets using friendly names
