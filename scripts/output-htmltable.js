@@ -6,7 +6,7 @@ module.exports = function(objArray,elem){
 	for (key in objArray[0]) {
 		properties.push(key);
 	}
-	var headers;
+	var headers = '';
 	for (var i=0; i < properties.length; i++){
 	  headers = headers+'<td>'+properties[i]+'</td>';
 	}
@@ -27,17 +27,7 @@ module.exports = function(objArray,elem){
 	elem.html('<table>'
 				+headers+rows+
 			  '</table>');
+	console.log('<table>'
+				+headers+rows+
+			  '</table>');
 };
-
-// <table style="width:300px">
-// <tr>
-  // <td>Jill</td>
-  // <td>Smith</td> 
-  // <td>50</td>
-// </tr>
-// <tr>
-  // <td>Eve</td>
-  // <td>Jackson</td> 
-  // <td>94</td>
-// </tr>
-// </table>

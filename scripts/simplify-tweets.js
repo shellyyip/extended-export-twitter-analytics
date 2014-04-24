@@ -40,7 +40,6 @@ module.exports = function(rawArray, keysArray){
 		var year = dateObj.getFullYear();
 		var month = (dateObj.getMonth() + 1);//Need to add 1 b/c JS Date month starts from 0 (so January = 0, Dec = 11). WHY.
 		var day = dateObj.getDate();
-		
 		//** Other props
 		var sponsoredInfo = tweet.sponsored_info;		
 		for (var key in keysArray) {
@@ -58,7 +57,7 @@ module.exports = function(rawArray, keysArray){
 								newObj['ISO Date'] = year + '-' + month + '-' + day;
 								break;
 							case 'MM/DD/YYYY':
-								newObj['Date'] = month+'/'+day+'/'+year;
+								newObj['date'] = month+'/'+day+'/'+year;
 								break;
 								
 						}
