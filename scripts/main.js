@@ -23,9 +23,9 @@ $(document).ready(function() {
 	
 	//Get tweets by taking raw copy/pasted obj input and getting the array of objs inside
 	var getTweetsArray = function (textarea) {
-		var textareaValue = $(textarea).val();
-		if (textareaValue.search('statuses')) {		
-			return $.parseJSON(textareaValue).statuses;	
+		var textareaValue = $.parseJSON($(textarea).val());
+		for (key in textareaValue) {
+			return textareaValue[key];	
 		}
 	};	
 		
@@ -33,8 +33,8 @@ $(document).ready(function() {
 	var generate = function () {	
 		var keys = getKeys('#tweetkeys','data-prop');
 		var dateRange = getKeys('#daterange','data-daterange');
-		var tweets = filterDateRange(getTweetsArray('.json-input'),dateRange,'timestamp');
-		//console.log(tweets);
+		var tweets = getTweetsArray('.json-input');
+		tweets = filterDateRange(tweets,dateRange,'timestamp');
 		var simpTweets = simplifyTweets(tweets, keys);
 		var csv = outputCSV(simpTweets);
 		//Output data onto screen

@@ -107,9 +107,9 @@ $(document).ready(function() {
 	
 	//Get tweets by taking raw copy/pasted obj input and getting the array of objs inside
 	var getTweetsArray = function (textarea) {
-		var textareaValue = $(textarea).val();
-		if (textareaValue.search('statuses')) {		
-			return $.parseJSON(textareaValue).statuses;	
+		var textareaValue = $.parseJSON($(textarea).val());
+		for (key in textareaValue) {
+			return textareaValue[key];	
 		}
 	};	
 		
@@ -117,8 +117,8 @@ $(document).ready(function() {
 	var generate = function () {	
 		var keys = getKeys('#tweetkeys','data-prop');
 		var dateRange = getKeys('#daterange','data-daterange');
-		var tweets = filterDateRange(getTweetsArray('.json-input'),dateRange,'timestamp');
-		//console.log(tweets);
+		var tweets = getTweetsArray('.json-input');
+		tweets = filterDateRange(tweets,dateRange,'timestamp');
 		var simpTweets = simplifyTweets(tweets, keys);
 		var csv = outputCSV(simpTweets);
 		//Output data onto screen
@@ -271,6 +271,9 @@ var getOptions = require('../scripts/getcheckboxes.js');
 // OUTPUT: totally simplified tweet objects in array, formatted as friendlyName: propValue
 // Note to self: convert timestamp to datetime via new Date(timestamp);
 module.exports = function(rawArray, keysArray){
+	if (keysArray.length == 0) {
+		return rawArray;
+	}
 	var findFullUrl = function (rawURL, entitiesObj) {
 	//this function DOES NOT assume that the rawURL is a media or URL object!
 		var urlsArray = entitiesObj.urls;
